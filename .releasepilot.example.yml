@@ -1,0 +1,26 @@
+project_name: MyApp
+release_sections:
+  - feat
+  - fix
+  - perf
+  - refactor
+excluded_scopes: [ci, chore]
+pr_checklist:
+  - "Tests added/updated"
+  - "Docs updated"
+  - "Security review (if touching auth)"
+version_file: package.json
+notification_channels:
+  slack:
+    enabled: false
+    webhook_url: ${SLACK_WEBHOOK}
+  teams:
+    enabled: false
+    webhook_url: ${TEAMS_WEBHOOK}
+ai_provider: openai # or anthropic
+custom_release_template: |
+  ## What's Changed
+  
+  {{changes}}
+  
+  **Full Changelog**: {{compare_url}}

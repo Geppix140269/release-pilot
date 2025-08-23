@@ -1,0 +1,15 @@
+{
+  "name": "technical",
+  "version": "1.0.0",
+  "main": "stripe-setup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "stripe": "^18.4.0"
+  }
+}

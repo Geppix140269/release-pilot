@@ -1,0 +1,54 @@
+name: 'ReleasePilot'
+description: 'Generate PR summaries, bump semver, update CHANGELOG, and publish release notes'
+author: 'ReleasePilot'
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  mode:
+    description: 'Operation mode: pr|merge|tag (auto-detected by default)'
+    required: false
+    default: 'auto'
+  release_type:
+    description: 'Release type: auto|patch|minor|major'
+    required: false
+    default: 'auto'
+  changelog_path:
+    description: 'Path to CHANGELOG.md file'
+    required: false
+    default: 'CHANGELOG.md'
+  slack_webhook:
+    description: 'Slack webhook URL for notifications'
+    required: false
+  teams_webhook:
+    description: 'Microsoft Teams webhook URL for notifications'
+    required: false
+  fail_on_missing_conventional_commits:
+    description: 'Fail if no conventional commits are found'
+    required: false
+    default: 'false'
+  openai_api_key:
+    description: 'OpenAI API key for generating summaries'
+    required: false
+  anthropic_api_key:
+    description: 'Anthropic API key for generating summaries'
+    required: false
+  github_token:
+    description: 'GitHub token for API operations'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  version:
+    description: 'The new version number'
+  changelog:
+    description: 'The generated changelog entry'
+  pr_body:
+    description: 'The generated PR body'
+  release_notes:
+    description: 'The generated release notes'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
