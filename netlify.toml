@@ -1,10 +1,10 @@
 [build]
-  command = "npm run build"
+  command = "echo 'No build needed'"
   functions = "netlify/functions"
-  publish = "dist"
+  publish = "."
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/api/*"
