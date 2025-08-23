@@ -413,15 +413,14 @@ jobs:<br>
             // For now, use monthly pricing
             const priceId = prices[tier].monthly;
             
-            // Create checkout session (you'll need a backend endpoint for this)
-            // For now, we'll use Stripe Payment Links
+            // Stripe Payment Links
             const paymentLinks = {
-                starter: 'https://buy.stripe.com/test_starter', // Replace with your actual payment link
-                professional: 'https://buy.stripe.com/test_professional' // Replace with your actual payment link
+                starter: 'https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc', // Your actual Starter link
+                professional: 'https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc' // Your actual Professional link (update when you create it)
             };
             
-            // Temporary: Alert with instructions
-            alert(`To complete purchase:\n\n1. Email support@releasepilot.io\n2. Mention the ${tier} plan\n3. We'll send you a payment link\n\nOr use coupon code EARLYBIRD30 for 30% off!`);
+            // Redirect to Stripe Payment Link
+            window.location.href = paymentLinks[tier] || paymentLinks.starter;
             
             // In production, you would redirect to Stripe Checkout:
             // window.location.href = paymentLinks[tier];
