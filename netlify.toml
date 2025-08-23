@@ -1,7 +1,7 @@
 [build]
-  command = "npm install"
+  command = "npm install && mkdir -p dist && cp index.html dist/"
   functions = "netlify/functions"
-  publish = "."
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
