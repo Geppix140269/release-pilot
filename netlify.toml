@@ -2,10 +2,10 @@
   command = "npm install"
   functions = "netlify/functions"
   publish = "."
-  environment = { SECRETS_SCAN_ENABLED = "false" }
 
 [build.environment]
   NODE_VERSION = "20"
+  SECRETS_SCAN_ENABLED = "false"
 
 [[redirects]]
   from = "/api/*"
