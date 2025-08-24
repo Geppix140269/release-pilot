@@ -103,38 +103,54 @@
             ctx.font = '32px Inter, Arial';
             ctx.fillText('Automate GitHub Releases with AI', 600, 280);
             
-            // Feature boxes
+            // Feature highlights with icons
             const features = [
-                'AI-Powered Release Notes',
-                'Semantic Versioning',
-                'Team Notifications'
+                { icon: '⚡', text: 'AI-Powered' },
+                { icon: '🔄', text: 'Automated' },
+                { icon: '📊', text: 'Smart Versioning' }
             ];
             
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.lineWidth = 2;
-            
+            // Feature pills
             features.forEach((feature, index) => {
-                const x = 300 + (index * 300);
+                const x = 250 + (index * 230);
                 const y = 380;
                 
-                // Box
-                ctx.fillRect(x - 120, y - 30, 240, 80);
-                ctx.strokeRect(x - 120, y - 30, 240, 80);
+                // Pill background
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.2)';
+                ctx.beginPath();
+                ctx.roundRect(x, y, 200, 50, 25);
+                ctx.fill();
+                
+                // Border
+                ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // Icon
+                ctx.font = '24px Arial';
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'left';
+                ctx.fillText(feature.icon, x + 20, y + 32);
                 
                 // Text
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                ctx.font = '20px Inter, Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(feature, x, y + 5);
+                ctx.font = '18px Inter, Arial';
+                ctx.fillText(feature.text, x + 55, y + 32);
             });
             
-            // Call to action
+            // Call to action button
+            const btnX = 450;
+            const btnY = 480;
             ctx.fillStyle = '#6366f1';
-            ctx.fillRect(450, 500, 300, 60);
+            ctx.beginPath();
+            ctx.roundRect(btnX, btnY, 300, 60, 8);
+            ctx.fill();
+            
+            // Button text
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 24px Inter, Arial';
-            ctx.fillText('Start Free Trial', 600, 540);
+            ctx.textAlign = 'center';
+            ctx.fillText('Start Free Trial', 600, btnY + 38);
             
             // URL
             ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
