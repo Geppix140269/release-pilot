@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>OG Image Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            background: #f0f0f0;
+        }
+        .canvas-container {
+            display: inline-block;
+            margin: 20px;
+        }
+        #og-canvas {
+            border: 2px solid #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h1>Open Graph Image & Favicon Generator</h1>
+        <p>Right-click and save each image:</p>
+        <ol>
+            <li><strong>og-image.png</strong> - Save the large image below (1200x630)</li>
+            <li><strong>favicon-16x16.png</strong> - Small favicon</li>
+            <li><strong>favicon-32x32.png</strong> - Medium favicon</li>
+            <li><strong>apple-touch-icon.png</strong> - Apple devices (180x180)</li>
+        </ol>
+    </div>
+
+    <div class="canvas-container">
+        <h3>Open Graph Image (1200x630) - Save as og-image.png</h3>
+        <canvas id="og-canvas" width="1200" height="630"></canvas>
+    </div>
+
+    <div class="canvas-container">
+        <h3>Favicons</h3>
+        <canvas id="favicon-16" width="16" height="16" style="image-rendering: pixelated; width: 64px; height: 64px; border: 1px solid #ccc;"></canvas>
+        <canvas id="favicon-32" width="32" height="32" style="image-rendering: pixelated; width: 64px; height: 64px; border: 1px solid #ccc; margin-left: 10px;"></canvas>
+        <canvas id="apple-touch" width="180" height="180" style="width: 180px; height: 180px; border: 1px solid #ccc; margin-left: 10px;"></canvas>
+    </div>
+
+    <script>
+        // Open Graph Image
+        function drawOGImage() {
+            const canvas = document.getElementById('og-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+            gradient.addColorStop(0, '#0a0e27');
+            gradient.addColorStop(0.5, '#162042');
+            gradient.addColorStop(1, '#1e2951');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1200, 630);
+            
+            // Decorative circles
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = '#6366f1';
+            ctx.beginPath();
+            ctx.arc(150, 150, 200, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#8b5cf6';
+            ctx.beginPath();
+            ctx.arc(1050, 480, 150, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#a855f7';
+            ctx.beginPath();
+            ctx.arc(600, 100, 100, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.globalAlpha = 1;
+            
+            // Logo/Brand
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 90px Inter, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('ReleasePilot', 600, 200);
+            
+            // Gradient text effect on brand
+            const textGradient = ctx.createLinearGradient(300, 150, 900, 200);
+            textGradient.addColorStop(0, '#6366f1');
+            textGradient.addColorStop(0.5, '#8b5cf6');
+            textGradient.addColorStop(1, '#a855f7');
+            ctx.fillStyle = textGradient;
+            ctx.font = 'bold 90px Inter, Arial';
+            ctx.fillText('ReleasePilot', 600, 200);
+            
+            // Tagline
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = '32px Inter, Arial';
+            ctx.fillText('Automate GitHub Releases with AI', 600, 280);
+            
+            // Feature boxes
+            const features = [
+                'AI-Powered Release Notes',
+                'Semantic Versioning',
+                'Team Notifications'
+            ];
+            
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 2;
+            
+            features.forEach((feature, index) => {
+                const x = 300 + (index * 300);
+                const y = 380;
+                
+                // Box
+                ctx.fillRect(x - 120, y - 30, 240, 80);
+                ctx.strokeRect(x - 120, y - 30, 240, 80);
+                
+                // Text
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.font = '20px Inter, Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(feature, x, y + 5);
+            });
+            
+            // Call to action
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(450, 500, 300, 60);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Inter, Arial';
+            ctx.fillText('Start Free Trial', 600, 540);
+            
+            // URL
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.font = '18px Inter, Arial';
+            ctx.fillText('releasepilot.io', 600, 595);
+        }
+        
+        // Favicon generator
+        function drawFavicon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#8b5cf6');
+            
+            // Rounded rect background
+            const radius = size * 0.2;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Letter "R"
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.55}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('R', size / 2, size / 2 + size * 0.02);
+        }
+        
+        // Generate all images
+        drawOGImage();
+        drawFavicon('favicon-16', 16);
+        drawFavicon('favicon-32', 32);
+        drawFavicon('apple-touch', 180);
+        
+        // Download helper
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+    
+    <div class="instructions">
+        <h3>Quick Download Buttons:</h3>
+        <button onclick="downloadCanvas('og-canvas', 'og-image.png')" style="padding: 10px 20px; margin: 5px;">Download OG Image</button>
+        <button onclick="downloadCanvas('favicon-16', 'favicon-16x16.png')" style="padding: 10px 20px; margin: 5px;">Download 16x16</button>
+        <button onclick="downloadCanvas('favicon-32', 'favicon-32x32.png')" style="padding: 10px 20px; margin: 5px;">Download 32x32</button>
+        <button onclick="downloadCanvas('apple-touch', 'apple-touch-icon.png')" style="padding: 10px 20px; margin: 5px;">Download Apple Icon</button>
+    </div>
+</body>
+</html>
