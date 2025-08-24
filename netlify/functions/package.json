@@ -1,0 +1,10 @@
+{
+  "name": "releasepilot-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for ReleasePilot",
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "node-fetch": "^2.6.9",
+    "mongodb": "^6.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+    "name": "ReleasePilot",
+    "short_name": "ReleasePilot",
+    "description": "Enterprise-Grade GitHub Release Automation",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "/favicon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#6366f1",
+    "background_color": "#0a0e27",
+    "display": "standalone",
+    "start_url": "/"
+}

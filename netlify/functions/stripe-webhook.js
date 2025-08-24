@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 // Generate license key
 function generateLicenseKey() {
@@ -87,6 +88,20 @@ exports.handler = async (event, context) => {
         // Send license email using Netlify Email Integration or external service
         await sendLicenseEmail(customer.email, licenseKey, tierInfo.tier, expiresAt);
         
+        // Send Telegram notification
+        await notifyTelegram({
+          customer: {
+            email: customer.email,
+            name: customer.name,
+            country: customer.address?.country
+          },
+          plan: tierInfo.tier.charAt(0).toUpperCase() + tierInfo.tier.slice(1),
+          amount: session.amount_total,
+          currency: session.currency,
+          paymentMethod: 'Card',
+          licenseKey: licenseKey
+        });
+        
         break;
       }
 
@@ -165,4 +180,31 @@ async function sendLicenseEmail(email, licenseKey, tier, expiresAt) {
   
   // For now, just log it
   return true;
+}
+
+// Send Telegram notification for new sales
+async function notifyTelegram(saleData) {
+  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
+    console.log('Telegram not configured, skipping notification');
+    return;
+  }
+
+  try {
+    const baseUrl = process.env.URL || 'https://releasepilot.io';
+    const response = await fetch(`${baseUrl}/.netlify/functions/telegram-notifier`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(saleData)
+    });
+
+    if (!response.ok) {
+      console.error('Failed to send Telegram notification:', await response.text());
+    } else {
+      console.log('Telegram notification sent successfully');
+    }
+  } catch (error) {
+    console.error('Error sending Telegram notification:', error);
+  }
 }

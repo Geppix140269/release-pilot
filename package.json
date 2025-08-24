@@ -4,7 +4,9 @@
   "description": "GitHub Action for automated PR summaries, semantic versioning, changelog updates, and release notes",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'Build complete'"
+    "build": "echo 'Build complete'",
+    "dev": "npx http-server . -p 8080 -o",
+    "serve": "npx http-server . -p 8080"
   },
   "keywords": [
     "github-action",
