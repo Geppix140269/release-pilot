@@ -1,5 +1,5 @@
 name: 'ReleasePilot - AI-Powered CI/CD Automation'
-description: 'Complete DevOps automation: AI PR summaries, semantic versioning, changelog management, multi-cloud deployments to AWS/Azure/GCP/Kubernetes, blue-green/canary strategies, and automated releases'
+description: 'AI PR summaries, auto versioning, changelog, multi-cloud deploy (AWS/Azure/GCP/K8s), blue-green/canary strategies'
 author: '1402 Celsius Ltd'
 branding:
   icon: 'zap'
