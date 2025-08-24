@@ -20,6 +20,8 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "stripe": "^14.0.0"
+    "stripe": "^14.0.0",
+    "node-fetch": "^2.6.9",
+    "mongodb": "^6.0.0"
   }
 }
