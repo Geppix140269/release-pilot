@@ -48,6 +48,12 @@ outputs:
     description: 'The generated PR body'
   release_notes:
     description: 'The generated release notes'
+  deployed:
+    description: 'Whether deployment was successful'
+  deployment_url:
+    description: 'The URL of the deployed application'
+  deployment_environment:
+    description: 'The environment that was deployed to'
 
 runs:
   using: 'node20'

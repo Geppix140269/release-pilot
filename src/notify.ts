@@ -105,14 +105,17 @@ async function sendSlackNotification(
   };
 
   if (payload.releaseUrl) {
-    slackPayload.blocks[2].elements.push({
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: 'View Release'
-      },
-      url: payload.releaseUrl
-    });
+    const actionsBlock = slackPayload.blocks[2];
+    if (actionsBlock && 'elements' in actionsBlock && actionsBlock.elements) {
+      actionsBlock.elements.push({
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'View Release'
+        },
+        url: payload.releaseUrl
+      });
+    }
   }
 
   try {

@@ -68,6 +68,9 @@ async function updateRelease(
   }
 
   const token = core.getInput('github_token') || process.env.GITHUB_TOKEN;
+  if (!token) {
+    throw new Error('GitHub token is required for updating releases');
+  }
   const octokit = github.getOctokit(token);
   const context = github.context;
 

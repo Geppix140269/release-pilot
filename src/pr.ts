@@ -217,7 +217,7 @@ export async function getPRInfo(): Promise<PRInfo | null> {
   return {
     number: pr.number,
     title: pr.title,
-    body: pr.body,
+    body: pr.body || null,
     commits: parsedCommits
   };
 }

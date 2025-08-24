@@ -1,26 +1,275 @@
-project_name: MyApp
-release_sections:
+# ReleasePilot Configuration Example
+# Complete configuration with CI/CD deployment features
+
+# Project Configuration
+projectName: MyApp
+versionFile: package.json
+
+# Release Configuration
+releaseSections:
   - feat
   - fix
   - perf
   - refactor
-excluded_scopes: [ci, chore]
-pr_checklist:
+
+excludedScopes:
+  - ci
+  - chore
+  - deps
+
+# PR Configuration
+prChecklist:
   - "Tests added/updated"
-  - "Docs updated"
-  - "Security review (if touching auth)"
-version_file: package.json
-notification_channels:
+  - "Documentation updated"
+  - "Security review completed"
+  - "Performance impact assessed"
+
+# AI Configuration
+aiProvider: openai # or anthropic
+
+# Notification Channels
+notificationChannels:
   slack:
-    enabled: false
-    webhook_url: ${SLACK_WEBHOOK}
+    enabled: true
+    webhookUrl: ${SLACK_WEBHOOK_URL}
   teams:
     enabled: false
-    webhook_url: ${TEAMS_WEBHOOK}
-ai_provider: openai # or anthropic
-custom_release_template: |
-  ## What's Changed
-  
-  {{changes}}
-  
-  **Full Changelog**: {{compare_url}}
+    webhookUrl: ${TEAMS_WEBHOOK_URL}
+
+# 🚀 CI/CD Deployment Configuration
+deployments:
+  # Development Environment
+  development:
+    branch: develop
+    provider: vercel # aws, azure, gcp, vercel, netlify, heroku, kubernetes, docker
+    strategy: direct # direct, blue-green, canary, rolling
+    autoApprove: true
+    url: https://dev.myapp.com
+    healthCheck: https://dev.myapp.com/health
+    rollbackOnFailure: true
+    secrets:
+      VERCEL_TOKEN: ${VERCEL_TOKEN}
+    variables:
+      VERCEL_PROJECT_ID: prj_development
+      VERCEL_TEAM_ID: team_abc123
+    preDeployCommand: npm run test
+    postDeployCommand: npm run smoke-test
+
+  # Staging Environment
+  staging:
+    branch: staging
+    provider: aws
+    strategy: blue-green
+    autoApprove: false
+    approvers:
+      - tech-lead
+      - devops-team
+    url: https://staging.myapp.com
+    healthCheck: https://staging.myapp.com/health
+    rollbackOnFailure: true
+    secrets:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    variables:
+      AWS_REGION: us-east-1
+      SERVICE: elasticbeanstalk
+      APP_NAME: myapp-staging
+      S3_BUCKET: myapp-deployments
+      TARGET_GROUP: arn:aws:elasticloadbalancing:...
+    preDeployCommand: |
+      npm run build
+      npm run test:integration
+    postDeployCommand: npm run test:e2e
+
+  # Production Environment
+  production:
+    branch: main
+    provider: kubernetes
+    strategy: canary
+    autoApprove: false
+    approvers:
+      - cto
+      - tech-lead
+      - security-team
+    url: https://myapp.com
+    healthCheck: https://myapp.com/health
+    rollbackOnFailure: true
+    secrets:
+      KUBECONFIG: ${KUBECONFIG}
+    variables:
+      K8S_NAMESPACE: production
+      K8S_DEPLOYMENT: myapp
+      REGISTRY: gcr.io/myproject
+      IMAGE: myapp
+      CANARY_PERCENTAGE: 10
+      MAX_SURGE: 25%
+      MAX_UNAVAILABLE: 0
+    preDeployCommand: |
+      npm run build:prod
+      npm run test:all
+      npm run security:scan
+    postDeployCommand: |
+      npm run test:smoke
+      npm run test:performance
+
+  # Feature Branch Deployments (Preview)
+  preview:
+    branch: /^feature\/.*/  # Regex pattern for feature branches
+    provider: netlify
+    strategy: direct
+    autoApprove: true
+    rollbackOnFailure: false
+    secrets:
+      NETLIFY_AUTH_TOKEN: ${NETLIFY_AUTH_TOKEN}
+    variables:
+      NETLIFY_SITE_ID: ${NETLIFY_SITE_ID}
+    preDeployCommand: npm run build:preview
+
+  # Hotfix Deployments
+  hotfix:
+    branch: /^hotfix\/.*/
+    provider: aws
+    strategy: rolling
+    autoApprove: true
+    url: https://myapp.com
+    healthCheck: https://myapp.com/health
+    rollbackOnFailure: true
+    secrets:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    variables:
+      AWS_REGION: us-east-1
+      SERVICE: ecs
+      ECS_CLUSTER: production-cluster
+      ECS_SERVICE: myapp-service
+      BATCH_SIZE: 33
+    preDeployCommand: npm run test:critical
+    postDeployCommand: npm run notify:hotfix
+
+# Multi-Region Production (Advanced)
+multiRegionDeployment:
+  enabled: true
+  regions:
+    - name: us-east-1
+      primary: true
+      provider: aws
+      url: https://us.myapp.com
+    - name: eu-west-1
+      primary: false
+      provider: aws
+      url: https://eu.myapp.com
+    - name: ap-southeast-1
+      primary: false
+      provider: aws
+      url: https://asia.myapp.com
+  strategy: sequential # sequential, parallel
+  delayBetweenRegions: 300 # seconds
+
+# Infrastructure as Code
+infrastructure:
+  provider: terraform # terraform, cloudformation, pulumi
+  autoApply: false
+  workingDirectory: ./infrastructure
+  variables:
+    environment: ${ENVIRONMENT}
+    region: ${AWS_REGION}
+
+# Database Migrations
+migrations:
+  enabled: true
+  provider: flyway # flyway, liquibase, migrate
+  autoRun: false
+  rollbackOnFailure: true
+  config:
+    url: ${DATABASE_URL}
+    schemas: public
+    locations: filesystem:./migrations
+
+# Monitoring & Observability
+monitoring:
+  provider: datadog # datadog, newrelic, prometheus
+  enabled: true
+  deploymentTracking: true
+  customMetrics:
+    - deployment.duration
+    - deployment.success_rate
+    - rollback.count
+  alerts:
+    - name: deployment-failure
+      condition: deployment.success_rate < 0.95
+      channels: [slack, pagerduty]
+
+# Security Scanning
+security:
+  enabled: true
+  scanners:
+    - type: sast
+      tool: sonarqube
+      failOnHighSeverity: true
+    - type: dependency
+      tool: snyk
+      failOnHighSeverity: true
+    - type: container
+      tool: trivy
+      failOnHighSeverity: false
+    - type: secrets
+      tool: gitleaks
+      failOnHighSeverity: true
+
+# Performance Testing
+performance:
+  enabled: true
+  tool: k6 # k6, jmeter, gatling
+  thresholds:
+    p95ResponseTime: 500 # ms
+    errorRate: 0.01 # 1%
+    throughput: 1000 # requests per second
+  runOn:
+    - staging
+    - production
+
+# Cost Management
+costManagement:
+  enabled: true
+  provider: infracost
+  threshold: 500 # USD per month
+  alertOnIncrease: 10 # percentage
+
+# Custom Scripts
+customScripts:
+  beforeDeploy: ./scripts/before-deploy.sh
+  afterDeploy: ./scripts/after-deploy.sh
+  onRollback: ./scripts/on-rollback.sh
+  onFailure: ./scripts/on-failure.sh
+
+# Feature Flags
+featureFlags:
+  provider: launchdarkly # launchdarkly, split, unleash
+  enabled: true
+  syncOnDeploy: true
+  environments:
+    development: dev-key
+    staging: staging-key
+    production: prod-key
+
+# Compliance & Governance
+compliance:
+  enabled: true
+  standards:
+    - SOC2
+    - HIPAA
+    - GDPR
+  auditLog: true
+  requireApproval:
+    - production
+    - staging
+  changeWindow:
+    enabled: true
+    timezone: America/New_York
+    allowedDays: [Mon, Tue, Wed, Thu]
+    allowedHours: "09:00-17:00"
+    blackoutDates:
+      - 2024-12-24
+      - 2024-12-25
+      - 2024-12-31
+      - 2025-01-01

@@ -4,9 +4,13 @@
   "description": "GitHub Action for automated PR summaries, semantic versioning, changelog updates, and release notes",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'Build complete'",
+    "build": "tsc && ncc build dist/src/index.js -o dist --minify",
     "dev": "npx http-server . -p 8080 -o",
-    "serve": "npx http-server . -p 8080"
+    "serve": "npx http-server . -p 8080",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "package": "ncc build dist/src/index.js -o dist --minify --license licenses.txt"
   },
   "keywords": [
     "github-action",
@@ -20,8 +24,24 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "stripe": "^14.0.0",
+    "mongodb": "^6.0.0",
     "node-fetch": "^2.6.9",
-    "mongodb": "^6.0.0"
+    "stripe": "^14.0.0"
+  },
+  "devDependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.3.0",
+    "@types/node-fetch": "^2.6.13",
+    "@types/semver": "^7.7.0",
+    "@vercel/ncc": "^0.38.3",
+    "jest": "^30.0.5",
+    "js-yaml": "^4.1.0",
+    "semver": "^7.7.2",
+    "toml": "^3.0.0",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
   }
 }

@@ -8,16 +8,12 @@ import {
   getPRInfo,
   parseCommit
 } from './pr';
-import {
-  getCurrentVersion,
-  updateVersion,
-  bumpVersion,
-  determineReleaseType,
-  ParsedCommit
-} from './semver';
+import { ParsedCommit } from './semver';
 import { updateChangelog } from './changelog';
 import { createRelease, getCommitsSinceLastTag, createTag } from './release';
 import { sendNotifications } from './notify';
+import { handleDeployment } from './deploy';
+import { handleMergeToMain, validateMergePrerequisites } from './merge';
 
 async function run(): Promise<void> {
   try {
@@ -102,52 +98,31 @@ async function handlePullRequest(config: any, isDryRun: boolean): Promise<void> 
 }
 
 async function handleMerge(config: any, isDryRun: boolean): Promise<void> {
-  core.info('Handling merge to default branch...');
-  
-  const commits = await getCommitsSinceLastTag();
-  
-  if (commits.length === 0) {
-    core.info('No commits found since last tag');
-    return;
-  }
-
-  const conventionalCommits = commits.filter(c => c.type !== null);
-  
-  if (conventionalCommits.length === 0) {
-    const failOnMissing = core.getInput('fail_on_missing_conventional_commits') === 'true';
-    if (failOnMissing) {
-      throw new Error('No conventional commits found');
+  try {
+    validateMergePrerequisites(config);
+    
+    const result = await handleMergeToMain(config, isDryRun);
+    
+    if (result) {
+      core.setOutput('version', result.version);
+      core.setOutput('changelog', result.changelogEntry);
+      core.setOutput('release_type', result.releaseType);
+      core.setOutput('commits_count', result.commitsSince.length.toString());
+      
+      // Handle deployment if configured
+      const deploymentResult = await handleDeployment(config, result.version, isDryRun);
+      if (deploymentResult.success) {
+        core.setOutput('deployed', 'true');
+        core.setOutput('deployment_url', deploymentResult.url || '');
+        core.setOutput('deployment_environment', deploymentResult.environment);
+      }
+    } else {
+      core.info('No version bump performed');
     }
-    core.warning('No conventional commits found, skipping version bump');
-    return;
+  } catch (error) {
+    core.error(`Merge handling failed: ${error}`);
+    throw error;
   }
-
-  const currentVersion = await getCurrentVersion(config.versionFile);
-  const releaseTypeInput = core.getInput('release_type') || 'auto';
-  
-  let newVersion: string;
-  if (releaseTypeInput === 'auto') {
-    const releaseType = determineReleaseType(conventionalCommits);
-    newVersion = bumpVersion(currentVersion, releaseType);
-  } else {
-    newVersion = bumpVersion(currentVersion, releaseTypeInput as any);
-  }
-
-  core.info(`Bumping version from ${currentVersion} to ${newVersion}`);
-  
-  await updateVersion(config.versionFile, newVersion, isDryRun);
-  
-  const changelogEntry = await updateChangelog(newVersion, conventionalCommits, config, isDryRun);
-  
-  if (!isDryRun) {
-    await commitChanges(config.versionFile, newVersion);
-    await createTag(newVersion, isDryRun);
-  }
-  
-  await sendNotifications(newVersion, conventionalCommits, config);
-  
-  core.setOutput('version', newVersion);
-  core.setOutput('changelog', changelogEntry);
 }
 
 async function handleTag(config: any, isDryRun: boolean): Promise<void> {
@@ -162,100 +137,16 @@ async function handleTag(config: any, isDryRun: boolean): Promise<void> {
   
   await sendNotifications(version, commits, config);
   
+  // Handle deployment for production (tags usually trigger production deployments)
+  const deploymentResult = await handleDeployment(config, version, isDryRun);
+  if (deploymentResult.success) {
+    core.setOutput('deployed', 'true');
+    core.setOutput('deployment_url', deploymentResult.url || '');
+    core.setOutput('deployment_environment', deploymentResult.environment);
+  }
+  
   core.setOutput('version', version);
 }
 
-async function commitChanges(versionFile: string, version: string): Promise<void> {
-  const token = core.getInput('github_token') || process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error('GitHub token is required for committing changes');
-  }
-
-  const octokit = github.getOctokit(token);
-  const context = github.context;
-  
-  try {
-    const { data: ref } = await octokit.rest.git.getRef({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      ref: `heads/${context.ref.replace('refs/heads/', '')}`
-    });
-
-    const { data: commit } = await octokit.rest.git.getCommit({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      commit_sha: ref.object.sha
-    });
-
-    const { data: tree } = await octokit.rest.git.getTree({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      tree_sha: commit.tree.sha
-    });
-
-    const versionFileContent = await getFileContent(versionFile);
-    const changelogContent = await getFileContent('CHANGELOG.md');
-
-    const { data: versionBlob } = await octokit.rest.git.createBlob({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      content: Buffer.from(versionFileContent).toString('base64'),
-      encoding: 'base64'
-    });
-
-    const { data: changelogBlob } = await octokit.rest.git.createBlob({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      content: Buffer.from(changelogContent).toString('base64'),
-      encoding: 'base64'
-    });
-
-    const { data: newTree } = await octokit.rest.git.createTree({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      base_tree: tree.sha,
-      tree: [
-        {
-          path: versionFile,
-          mode: '100644',
-          type: 'blob',
-          sha: versionBlob.sha
-        },
-        {
-          path: 'CHANGELOG.md',
-          mode: '100644',
-          type: 'blob',
-          sha: changelogBlob.sha
-        }
-      ]
-    });
-
-    const { data: newCommit } = await octokit.rest.git.createCommit({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      message: `chore(release): bump version to ${version} [skip ci]`,
-      tree: newTree.sha,
-      parents: [ref.object.sha]
-    });
-
-    await octokit.rest.git.updateRef({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      ref: `heads/${context.ref.replace('refs/heads/', '')}`,
-      sha: newCommit.sha
-    });
-
-    core.info(`Committed version bump to ${version}`);
-  } catch (error) {
-    core.error(`Failed to commit changes: ${error}`);
-    throw error;
-  }
-}
-
-async function getFileContent(filePath: string): Promise<string> {
-  const fs = require('fs');
-  const path = require('path');
-  return fs.readFileSync(path.join(process.cwd(), filePath), 'utf8');
-}
 
 run();

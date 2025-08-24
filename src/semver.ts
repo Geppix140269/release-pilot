@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as toml from 'toml';
-import { Config } from './config';
 
 export type ReleaseType = 'major' | 'minor' | 'patch';
 
