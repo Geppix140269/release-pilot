@@ -1,9 +1,9 @@
-name: 'ReleasePilot'
-description: 'Generate PR summaries, bump semver, update CHANGELOG, and publish release notes'
-author: 'ReleasePilot'
+name: 'ReleasePilot - AI-Powered CI/CD Automation'
+description: 'Complete DevOps automation: AI PR summaries, semantic versioning, changelog management, multi-cloud deployments to AWS/Azure/GCP/Kubernetes, blue-green/canary strategies, and automated releases'
+author: '1402 Celsius Ltd'
 branding:
-  icon: 'package'
-  color: 'blue'
+  icon: 'zap'
+  color: 'purple'
 
 inputs:
   mode:
