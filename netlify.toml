@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && mkdir -p dist && cp *.html *.js dist/ && cp -f favicon.* *.png site.webmanifest dist/ 2>/dev/null || true"
+  command = "npm install && mkdir -p dist && cp -r *.html *.js css js dist/ && cp -f favicon.* *.png site.webmanifest dist/ 2>/dev/null || true"
   functions = "netlify/functions"
   publish = "dist"
 
@@ -42,4 +42,4 @@
     X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self' https://js.stripe.com https://api.telegram.org; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://*.netlify.app"
+    Content-Security-Policy = "default-src 'self' https://js.stripe.com https://api.telegram.org; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://*.netlify.app"
