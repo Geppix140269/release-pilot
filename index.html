@@ -581,6 +581,10 @@
                 AI-powered DevOps automation that handles releases, versioning, and deployments across AWS, Azure, GCP, Kubernetes, and more. From PR to production in minutes.
             </p>
             
+            <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 8px; padding: 12px 20px; margin: 20px auto 30px; max-width: 600px; text-align: center;">
+                <span style="color: #ffa500;">ℹ️</span> <strong>Requires OpenAI API key</strong> for AI features • ~$0.002 per release • <a href="#setup" style="color: var(--primary); text-decoration: underline;">See setup guide ↓</a>
+            </div>
+            
             <div class="btn-group">
                 <a href="https://buy.stripe.com/7sY7sN94w5FKdmefJg08g01" class="btn btn-primary glow" target="_blank">Start Free Trial</a>
                 <a href="https://github.com/marketplace/actions/releasepilot-ai-powered-ci-cd-automation" class="btn btn-secondary" target="_blank">View on GitHub</a>
@@ -796,6 +800,79 @@
         <p style="text-align: center; margin-top: 3rem; color: var(--text-dim);">
             ✨ Free forever for open source projects • 14-day free trial • No credit card required
         </p>
+        <p style="text-align: center; margin-top: 1rem; color: var(--text-dim); font-size: 0.9rem;">
+            💡 AI features require your own OpenAI API key (~$1-5/month typical usage)
+        </p>
+    </section>
+    
+    <!-- Setup Instructions Section -->
+    <section class="features" id="setup" style="background: var(--dark-light); padding: 60px 20px;">
+        <div class="container" style="max-width: 900px; margin: 0 auto;">
+            <h2 class="section-title">Quick Setup Guide</h2>
+            <p class="section-subtitle">Get started in 3 simple steps</p>
+            
+            <div style="margin-top: 3rem;">
+                <div class="glass" style="padding: 2rem; margin-bottom: 2rem; border-radius: 12px;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">
+                        <span style="background: var(--primary); color: var(--dark); padding: 4px 12px; border-radius: 20px; margin-right: 10px;">1</span>
+                        Get Your OpenAI API Key
+                    </h3>
+                    <ol style="color: var(--text-dim); line-height: 1.8; padding-left: 40px;">
+                        <li>Sign up at <a href="https://platform.openai.com" target="_blank" style="color: var(--primary);">platform.openai.com</a> (get $5 free credit)</li>
+                        <li>Go to API Keys → Create new secret key</li>
+                        <li>Copy your key (starts with <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">sk-...</code>)</li>
+                    </ol>
+                </div>
+                
+                <div class="glass" style="padding: 2rem; margin-bottom: 2rem; border-radius: 12px;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">
+                        <span style="background: var(--primary); color: var(--dark); padding: 4px 12px; border-radius: 20px; margin-right: 10px;">2</span>
+                        Add to GitHub Secrets
+                    </h3>
+                    <div style="color: var(--text-dim); line-height: 1.8; padding-left: 40px;">
+                        In your GitHub repository:
+                        <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 1rem; overflow-x: auto;">
+Settings → Secrets → Actions → New repository secret
+Name: OPENAI_API_KEY
+Value: [Your OpenAI API key]</pre>
+                    </div>
+                </div>
+                
+                <div class="glass" style="padding: 2rem; border-radius: 12px;">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">
+                        <span style="background: var(--primary); color: var(--dark); padding: 4px 12px; border-radius: 20px; margin-right: 10px;">3</span>
+                        Add ReleasePilot Action
+                    </h3>
+                    <div style="color: var(--text-dim); line-height: 1.8; padding-left: 40px;">
+                        Create <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">.github/workflows/release.yml</code>:
+                        <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 1rem; overflow-x: auto;">
+name: ReleasePilot
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: releasepilot/action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <p style="color: var(--text-dim); margin-bottom: 1rem;">
+                    <strong>That's it!</strong> ReleasePilot will now handle your releases automatically.
+                </p>
+                <a href="https://github.com/marketplace/actions/releasepilot-ai-powered-ci-cd-automation" class="btn btn-primary" target="_blank">
+                    View Full Documentation →
+                </a>
+            </div>
+        </div>
     </section>
     
     <!-- Footer -->
