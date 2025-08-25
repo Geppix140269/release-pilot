@@ -1,0 +1,29 @@
+{
+  "name": "release-pilot-azure-task",
+  "version": "1.0.0",
+  "description": "ReleasePilot task for Azure DevOps",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "tfx extension create --manifest-globs vss-extension.json",
+    "publish": "tfx extension publish --manifest-globs vss-extension.json"
+  },
+  "author": "ReleasePilot",
+  "license": "MIT",
+  "dependencies": {
+    "azure-devops-node-api": "^12.2.0",
+    "azure-pipelines-task-lib": "^4.6.1",
+    "openai": "^4.26.0",
+    "semver": "^7.5.4",
+    "@azure/identity": "^4.0.0",
+    "@azure/arm-appservice": "^14.0.0",
+    "@azure/arm-containerservice": "^19.0.0",
+    "axios": "^1.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/semver": "^7.5.6",
+    "typescript": "^5.3.3",
+    "tfx-cli": "^0.16.0"
+  }
+}

@@ -1,0 +1,175 @@
+# Example Azure Pipeline using ReleasePilot
+# This demonstrates various ways to use ReleasePilot in your CI/CD pipeline
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+  tags:
+    include:
+      - v*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: ReleasePilot-Variables  # Contains OPENAI_API_KEY, SLACK_WEBHOOK, etc.
+
+stages:
+  - stage: Build
+    displayName: 'Build Application'
+    jobs:
+      - job: BuildJob
+        displayName: 'Build and Test'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm ci
+              npm run build
+              npm test
+            displayName: 'Build and Test'
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/test-results.xml'
+            displayName: 'Publish Test Results'
+
+  - stage: Release
+    displayName: 'Create Release'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: ReleaseJob
+        displayName: 'Generate Release'
+        steps:
+          # Full release with AI-powered versioning and changelog
+          - task: ReleasePilot@1
+            displayName: 'ReleasePilot - Create Release'
+            name: release
+            inputs:
+              action: 'full-release'
+              openaiApiKey: $(OPENAI_API_KEY)
+              azureDevOpsToken: $(System.AccessToken)
+              versionStrategy: 'semantic'
+              changelogStyle: 'conventional'
+              includeWorkItems: true
+              notifyTeams: true
+              teamsWebhook: $(TEAMS_WEBHOOK)
+
+          # Use the version output in subsequent tasks
+          - script: |
+              echo "Released version: $(release.ReleasePilot.Version)"
+              echo "##vso[build.updatebuildnumber]$(release.ReleasePilot.Version)"
+            displayName: 'Update Build Number'
+
+          # Publish artifacts with version
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'release-$(release.ReleasePilot.Version)'
+            displayName: 'Publish Artifacts'
+
+  - stage: DeployDev
+    displayName: 'Deploy to Development'
+    dependsOn: Release
+    condition: succeeded()
+    jobs:
+      - deployment: DeployDevJob
+        displayName: 'Deploy to Dev Environment'
+        environment: 'Development'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ReleasePilot@1
+                  displayName: 'Deploy to Dev Azure App Service'
+                  inputs:
+                    action: 'deploy-only'
+                    openaiApiKey: $(OPENAI_API_KEY)
+                    deploymentTarget: 'azure-app-service'
+                    deploymentStrategy: 'direct'
+                    notifySlack: true
+                    slackWebhook: $(SLACK_WEBHOOK_DEV)
+
+  - stage: DeployStaging
+    displayName: 'Deploy to Staging'
+    dependsOn: DeployDev
+    condition: succeeded()
+    jobs:
+      - deployment: DeployStagingJob
+        displayName: 'Deploy to Staging Environment'
+        environment: 'Staging'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ReleasePilot@1
+                  displayName: 'Blue-Green Deploy to Staging'
+                  inputs:
+                    action: 'deploy-only'
+                    openaiApiKey: $(OPENAI_API_KEY)
+                    deploymentTarget: 'azure-app-service'
+                    deploymentStrategy: 'blue-green'
+                    notifySlack: true
+                    slackWebhook: $(SLACK_WEBHOOK_STAGING)
+
+  - stage: DeployProduction
+    displayName: 'Deploy to Production'
+    dependsOn: DeployStaging
+    condition: succeeded()
+    jobs:
+      - deployment: DeployProdJob
+        displayName: 'Deploy to Production Environment'
+        environment: 'Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ReleasePilot@1
+                  displayName: 'Canary Deploy to Production'
+                  inputs:
+                    action: 'deploy-only'
+                    openaiApiKey: $(OPENAI_API_KEY)
+                    deploymentTarget: 'azure-app-service'
+                    deploymentStrategy: 'canary'
+                    notifySlack: true
+                    slackWebhook: $(SLACK_WEBHOOK)
+                    notifyTeams: true
+                    teamsWebhook: $(TEAMS_WEBHOOK)
+
+# Alternative: Simple pipeline for feature branches
+# Just version bump and changelog, no deployment
+---
+trigger:
+  branches:
+    include:
+      - feature/*
+      - fix/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: ReleasePilot@1
+    displayName: 'Generate Changelog for PR'
+    inputs:
+      action: 'changelog-only'
+      openaiApiKey: $(OPENAI_API_KEY)
+      changelogStyle: 'simple'
+      includeWorkItems: true
+
+  - script: |
+      echo "$(ReleasePilot.Changelog)" > CHANGELOG_PREVIEW.md
+    displayName: 'Save Changelog Preview'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'CHANGELOG_PREVIEW.md'
+      ArtifactName: 'changelog-preview'
+    displayName: 'Publish Changelog Preview'

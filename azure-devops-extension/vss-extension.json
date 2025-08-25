@@ -1,0 +1,88 @@
+{
+  "manifestVersion": 1,
+  "id": "release-pilot",
+  "name": "ReleasePilot - AI-Powered Release Automation",
+  "version": "1.0.0",
+  "publisher": "ReleasePilot",
+  "description": "AI-powered release automation for Azure DevOps. Automate versioning, changelogs, and deployments with GPT-4.",
+  "public": false,
+  "categories": ["Azure Pipelines"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "images/extension-icon.png"
+  },
+  "content": {
+    "details": {
+      "path": "README.md"
+    },
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "links": {
+    "getstarted": {
+      "uri": "https://releasepilot.net/azure-devops"
+    },
+    "learn": {
+      "uri": "https://releasepilot.net/docs"
+    },
+    "support": {
+      "uri": "https://releasepilot.net/support"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/geppix140269/release-pilot-azure"
+  },
+  "badges": [
+    {
+      "href": "https://releasepilot.net",
+      "uri": "https://img.shields.io/badge/ReleasePilot-AI%20Powered-purple",
+      "description": "AI-Powered Release Automation"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "images/screenshot-1.png"
+    },
+    {
+      "path": "images/screenshot-2.png"
+    }
+  ],
+  "files": [
+    {
+      "path": "ReleasePilotTask"
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ],
+  "tags": [
+    "Release",
+    "Automation",
+    "AI",
+    "GPT-4",
+    "Changelog",
+    "Versioning",
+    "Deployment",
+    "DevOps",
+    "CI/CD"
+  ],
+  "contributions": [
+    {
+      "id": "release-pilot-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "ReleasePilotTask"
+      }
+    }
+  ]
+}

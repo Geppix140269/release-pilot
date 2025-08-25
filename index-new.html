@@ -3,26 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReleasePilot - AI-Powered DevOps Automation Platform</title>
-    <meta name="description" content="Complete CI/CD automation with AI. Deploy to AWS, Azure, GCP, Kubernetes. Automated releases, versioning, and multi-cloud deployments.">
+    <title>ReleasePilot - AI Code Review & Release Automation (Honest Edition)</title>
+    <meta name="description" content="AI-powered code review and release automation for GitHub & Azure DevOps. Real features, real pricing, no BS.">
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ReleasePilot - AI Code Review & Release Automation">
+    <meta property="og:description" content="Actually saves 2-3 hours/month on release notes. Now with AI code review for Azure DevOps.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/Geppix140269/release-pilot/main/og-image.png">
     <meta property="og:url" content="https://releasepilot.net/">
-    <meta property="og:title" content="ReleasePilot - Next-Gen DevOps Automation">
-    <meta property="og:description" content="AI-powered CI/CD platform. Deploy anywhere. Blue-green, canary, rolling deployments.">
-    <meta property="og:image" content="https://releasepilot.net/og-image.png">
     
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://releasepilot.net/">
-    <meta property="twitter:title" content="ReleasePilot - Next-Gen DevOps Automation">
-    <meta property="twitter:image" content="https://releasepilot.net/og-image.png">
-    
-    <!-- Favicons -->
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -132,6 +124,7 @@
             display: flex;
             gap: 2rem;
             align-items: center;
+            list-style: none;
         }
         
         .nav-links a {
@@ -160,14 +153,27 @@
             z-index: 1;
         }
         
+        .badge-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
         .badge {
             display: inline-block;
             padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
             border-radius: 50px;
             font-size: 0.9rem;
-            margin-bottom: 2rem;
             font-weight: 600;
+        }
+        
+        .badge.new {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
         }
         
         h1 {
@@ -231,37 +237,8 @@
             border-color: var(--primary);
         }
         
-        /* Stats */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .stat-label {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-        
-        /* Features Section */
-        .features {
+        /* Sections */
+        .section {
             padding: 100px 20px;
             max-width: 1400px;
             margin: 0 auto;
@@ -280,136 +257,121 @@
         .section-subtitle {
             text-align: center;
             color: var(--text-dim);
-            margin-bottom: 4rem;
             font-size: 1.2rem;
+            margin-bottom: 3rem;
         }
         
+        /* Features Grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-bottom: 5rem;
+            margin-top: 3rem;
         }
         
         .feature-card {
-            padding: 2.5rem;
+            padding: 2rem;
             position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
         }
         
-        .feature-card::before {
-            content: '';
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .feature-card p {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        
+        .new-badge {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transition: transform 0.3s;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
         
-        .feature-card:hover::before {
-            transform: scaleX(1);
+        /* Steps */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
         
-        .feature-icon {
+        .step {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
             width: 60px;
             height: 60px;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 15px;
+            margin: 0 auto 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
             font-size: 1.5rem;
+            font-weight: bold;
         }
         
-        .feature-title {
-            font-size: 1.5rem;
+        .step h3 {
             margin-bottom: 1rem;
-            color: var(--text);
-        }
-        
-        .feature-description {
-            color: var(--text-dim);
-            line-height: 1.6;
-        }
-        
-        /* CI/CD Section */
-        .cicd-section {
-            padding: 100px 20px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(255, 0, 234, 0.05) 100%);
-        }
-        
-        .deployment-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 3rem auto;
-        }
-        
-        .deployment-card {
-            padding: 2rem;
-            text-align: center;
-            border: 2px solid transparent;
-            background-image: linear-gradient(var(--dark-light), var(--dark-light)),
-                            linear-gradient(135deg, var(--primary), var(--secondary));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            border-radius: 20px;
-        }
-        
-        .deployment-card:hover {
-            transform: scale(1.05);
-            transition: transform 0.3s;
-        }
-        
-        .provider-logo {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .provider-name {
             font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
         }
         
-        .provider-features {
+        .step p {
             color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: left;
+            font-family: 'Courier New', monospace;
             font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            color: var(--accent);
         }
         
         /* Pricing */
-        .pricing {
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .pricing-cards {
+        .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
         
         .pricing-card {
-            padding: 3rem 2rem;
+            padding: 2rem;
             position: relative;
-            text-align: center;
+            transition: all 0.3s;
         }
         
-        .pricing-card.popular {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 234, 0.1) 100%);
+        .pricing-card.featured {
             border: 2px solid var(--primary);
+            transform: scale(1.05);
         }
         
-        .pricing-card.popular::before {
-            content: 'MOST POPULAR';
+        .popular-badge {
             position: absolute;
             top: -15px;
             left: 50%;
@@ -418,414 +380,560 @@
             padding: 0.3rem 1rem;
             border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: bold;
+            white-space: nowrap;
         }
         
-        .plan-name {
-            font-size: 1.8rem;
+        .pricing-card h3 {
+            font-size: 1.5rem;
             margin-bottom: 1rem;
         }
         
-        .plan-price {
+        .price {
             font-size: 3rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin: 1rem 0;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
-        .plan-period {
+        .price-period {
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+        
+        .price-description {
             color: var(--text-dim);
             margin-bottom: 2rem;
         }
         
-        .plan-features {
+        .pricing-features {
             list-style: none;
             margin-bottom: 2rem;
         }
         
-        .plan-features li {
+        .pricing-features li {
             padding: 0.5rem 0;
+            color: var(--text-dim);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .pricing-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+        
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: var(--glass);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th {
+            padding: 1.5rem;
+            background: rgba(0, 212, 255, 0.1);
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .comparison-table td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
             color: var(--text-dim);
         }
         
-        .plan-features li::before {
-            content: '✓ ';
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .comparison-table .check {
             color: var(--accent);
-            font-weight: bold;
+            font-weight: 600;
+        }
+        
+        .comparison-table .cross {
+            color: #ff4444;
+        }
+        
+        /* FAQ */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .faq-item {
+            padding: 2rem;
+        }
+        
+        .faq-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .faq-item p {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            text-align: center;
+        }
+        
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 234, 0.1));
+            border: 2px solid var(--glass-border);
+            border-radius: 30px;
+        }
+        
+        .cta-box h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cta-box p {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .small {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            opacity: 0.7;
         }
         
         /* Footer */
         footer {
-            padding: 3rem 2rem;
+            padding: 60px 20px 30px;
+            background: rgba(10, 10, 15, 0.9);
             border-top: 1px solid var(--glass-border);
-            text-align: center;
-            color: var(--text-dim);
         }
         
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
         }
         
-        .footer-links a {
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .footer-section a,
+        .footer-section p {
+            display: block;
             color: var(--text-dim);
             text-decoration: none;
+            padding: 0.3rem 0;
             transition: color 0.3s;
         }
         
-        .footer-links a:hover {
+        .footer-section a:hover {
             color: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             h1 {
-                font-size: 3rem;
+                font-size: 2.5rem;
             }
             
-            .nav-links {
-                display: none;
+            .section-title {
+                font-size: 2rem;
             }
             
             .features-grid,
-            .deployment-grid,
-            .pricing-cards {
+            .pricing-grid,
+            .faq-grid {
                 grid-template-columns: 1fr;
             }
             
-            .pricing-card.popular {
-                transform: scale(1);
+            .comparison-table {
+                font-size: 0.9rem;
             }
-        }
-        
-        /* Glow Effects */
-        .glow {
-            position: relative;
-        }
-        
-        .glow::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-            opacity: 0.3;
-            filter: blur(30px);
-            z-index: -1;
-        }
-        
-        /* Floating Animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .float {
-            animation: float 3s ease-in-out infinite;
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Background Animation -->
     <div class="bg-animation"></div>
     
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
             <div class="logo">ReleasePilot</div>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#cicd">CI/CD</a>
-                <a href="#pricing">Pricing</a>
-                <a href="https://github.com/marketplace/actions/releasepilot" target="_blank">GitHub</a>
-                <a href="#" class="btn btn-primary">Get Started</a>
-            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#compare">Compare</a></li>
+                <li><a href="https://github.com/marketplace/actions/releasepilot">GitHub</a></li>
+            </ul>
         </div>
     </nav>
-    
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="badge float">🚀 NEW: Multi-Cloud CI/CD Platform</div>
-            <h1>Deploy Everywhere<br>With One Action</h1>
-            <p class="hero-subtitle">
-                AI-powered DevOps automation that handles releases, versioning, and deployments across AWS, Azure, GCP, Kubernetes, and more. From PR to production in minutes.
-            </p>
-            
-            <div class="btn-group">
-                <a href="#pricing" class="btn btn-primary glow">Start Free Trial</a>
-                <a href="https://github.com/marketplace/actions/releasepilot" class="btn btn-secondary">View on GitHub</a>
+            <div class="badge-group">
+                <span class="badge">GitHub Actions</span>
+                <span class="badge">Azure DevOps</span>
+                <span class="badge new">AI Code Review</span>
             </div>
             
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number">10hrs</div>
-                    <div class="stat-label">Saved Monthly</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">8</div>
-                    <div class="stat-label">Cloud Providers</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">95%</div>
-                    <div class="stat-label">Less Errors</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">2min</div>
-                    <div class="stat-label">Setup Time</div>
-                </div>
+            <h1>AI That Actually Reviews Code & Writes Release Notes</h1>
+            <p class="hero-subtitle">No marketing BS. Just a tool that saves you 2-3 hours/month on releases.</p>
+            
+            <div class="btn-group">
+                <a href="#pricing" class="btn btn-primary">See Real Pricing</a>
+                <a href="#how" class="btn btn-secondary">5-Minute Setup</a>
             </div>
         </div>
     </section>
-    
+
     <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">Complete DevOps Automation</h2>
-        <p class="section-subtitle">Everything you need for modern software delivery</p>
+    <section id="features" class="section">
+        <h2 class="section-title">What ReleasePilot Actually Does</h2>
+        <p class="section-subtitle">Facts only. No exaggeration.</p>
         
         <div class="features-grid">
             <div class="feature-card glass">
-                <div class="feature-icon">🤖</div>
-                <h3 class="feature-title">AI-Powered PR Summaries</h3>
-                <p class="feature-description">
-                    GPT-4 and Claude automatically generate comprehensive PR descriptions, saving hours of documentation work.
-                </p>
+                <h3>AI Release Notes</h3>
+                <p>Reads your commit messages, sends them to GPT-4, generates human-readable summaries.</p>
             </div>
             
             <div class="feature-card glass">
-                <div class="feature-icon">📊</div>
-                <h3 class="feature-title">Semantic Versioning</h3>
-                <p class="feature-description">
-                    Automatically calculate version bumps based on conventional commits. Major, minor, patch - all handled.
-                </p>
+                <span class="new-badge">NEW</span>
+                <h3>AI Code Review</h3>
+                <p>Reviews PRs for security, performance, and quality issues. Posts comments directly on Azure DevOps.</p>
             </div>
             
             <div class="feature-card glass">
-                <div class="feature-icon">📝</div>
-                <h3 class="feature-title">Changelog Management</h3>
-                <p class="feature-description">
-                    Keep CHANGELOG.md always up-to-date with categorized entries and comparison links between versions.
-                </p>
+                <h3>Version Bumping</h3>
+                <p>Automatically calculates semantic versions based on commit analysis.</p>
             </div>
             
             <div class="feature-card glass">
-                <div class="feature-icon">🚀</div>
-                <h3 class="feature-title">Multi-Cloud Deployments</h3>
-                <p class="feature-description">
-                    Deploy to AWS, Azure, GCP, Kubernetes, Docker, Vercel, Netlify, or Heroku with one configuration.
-                </p>
+                <h3>Deployment Triggers</h3>
+                <p>Can trigger your existing deployment scripts after release.</p>
             </div>
             
             <div class="feature-card glass">
-                <div class="feature-icon">🔄</div>
-                <h3 class="feature-title">Advanced Strategies</h3>
-                <p class="feature-description">
-                    Blue-green, canary, and rolling deployments with automatic health checks and instant rollback.
-                </p>
+                <h3>Notifications</h3>
+                <p>Sends release summaries to Slack/Teams webhooks.</p>
             </div>
             
             <div class="feature-card glass">
-                <div class="feature-icon">🔔</div>
-                <h3 class="feature-title">Team Notifications</h3>
-                <p class="feature-description">
-                    Keep your team informed with Slack, Teams, and webhook notifications for all deployment events.
-                </p>
+                <h3>Time Saved</h3>
+                <p>Saves approximately 2-3 hours per month on release management tasks.</p>
             </div>
         </div>
     </section>
-    
-    <!-- CI/CD Section -->
-    <section class="cicd-section" id="cicd">
-        <div class="container">
-            <h2 class="section-title">Deploy Anywhere</h2>
-            <p class="section-subtitle">One configuration, infinite possibilities</p>
-            
-            <div class="deployment-grid">
-                <div class="deployment-card">
-                    <div class="provider-logo">☁️</div>
-                    <div class="provider-name">AWS</div>
-                    <div class="provider-features">ECS, Lambda, Elastic Beanstalk</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">🔷</div>
-                    <div class="provider-name">Azure</div>
-                    <div class="provider-features">App Service, Functions, AKS</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">🔵</div>
-                    <div class="provider-name">Google Cloud</div>
-                    <div class="provider-features">Cloud Run, App Engine, GKE</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">⚓</div>
-                    <div class="provider-name">Kubernetes</div>
-                    <div class="provider-features">Any K8s Cluster</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">🐳</div>
-                    <div class="provider-name">Docker</div>
-                    <div class="provider-features">Registry & Swarm</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">▲</div>
-                    <div class="provider-name">Vercel</div>
-                    <div class="provider-features">Next.js & Frontend</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">🔺</div>
-                    <div class="provider-name">Netlify</div>
-                    <div class="provider-features">Static Sites & JAMstack</div>
-                </div>
-                
-                <div class="deployment-card">
-                    <div class="provider-logo">🟣</div>
-                    <div class="provider-name">Heroku</div>
-                    <div class="provider-features">Apps & Containers</div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Deployment Strategies</h3>
-                <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 2rem;">
-                    <div>
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔵🟢</div>
-                        <div style="font-weight: 600;">Blue-Green</div>
-                        <div style="color: var(--text-dim); font-size: 0.9rem;">Zero downtime</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐤</div>
-                        <div style="font-weight: 600;">Canary</div>
-                        <div style="color: var(--text-dim); font-size: 0.9rem;">Gradual rollout</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎢</div>
-                        <div style="font-weight: 600;">Rolling</div>
-                        <div style="color: var(--text-dim); font-size: 0.9rem;">Incremental updates</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <h2 class="section-title">Simple, Transparent Pricing</h2>
-        <p class="section-subtitle">Start free, scale as you grow</p>
+
+    <!-- How It Works -->
+    <section id="how" class="section">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Simple setup. Real results.</p>
         
-        <div class="pricing-cards">
+        <div class="steps">
+            <div class="step glass">
+                <div class="step-number">1</div>
+                <h3>Get OpenAI Key</h3>
+                <p>Go to openai.com, pay $5, get API key</p>
+                <div class="code-block">
+                    <pre>sk-abc123xyz...</pre>
+                </div>
+            </div>
+            
+            <div class="step glass">
+                <div class="step-number">2</div>
+                <h3>Add to Pipeline</h3>
+                <p>GitHub Actions:</p>
+                <div class="code-block">
+                    <pre>- uses: Geppix140269/release-pilot@v1
+  with:
+    openai-api-key: ${{ secrets.OPENAI_API_KEY }}</pre>
+                </div>
+            </div>
+            
+            <div class="step glass">
+                <div class="step-number">3</div>
+                <h3>Write Good Commits</h3>
+                <div class="code-block">
+                    <pre>GOOD: fix: user authentication timeout
+BAD: fixed stuff</pre>
+                </div>
+            </div>
+            
+            <div class="step glass">
+                <div class="step-number">4</div>
+                <h3>Push & Watch</h3>
+                <p>AI reads commits, generates notes, creates release</p>
+                <small style="color: var(--text-dim);">Takes about 30 seconds</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="section">
+        <h2 class="section-title">Honest Pricing</h2>
+        <p class="section-subtitle">Plus ~$0.002 per release for OpenAI API</p>
+        
+        <div class="pricing-grid">
             <div class="pricing-card glass">
-                <h3 class="plan-name">Starter</h3>
-                <div class="plan-price">$19</div>
-                <div class="plan-period">per month</div>
-                <ul class="plan-features">
-                    <li>5 private repositories</li>
-                    <li>AI-powered summaries</li>
-                    <li>Basic deployments</li>
+                <h3>ReleasePilot Classic</h3>
+                <div class="price">$19<span class="price-period">/month</span></div>
+                <p class="price-description">What most people need</p>
+                <ul class="pricing-features">
+                    <li>AI release notes</li>
+                    <li>Version bumping</li>
+                    <li>GitHub Actions only</li>
                     <li>Email support</li>
-                    <li>Slack integration</li>
                 </ul>
-                <a href="https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc" class="btn btn-secondary" style="width: 100%;">Start Free Trial</a>
+                <a href="https://buy.stripe.com/classic" class="btn btn-secondary">Start Free Trial</a>
             </div>
             
-            <div class="pricing-card glass popular">
-                <h3 class="plan-name">Professional</h3>
-                <div class="plan-price">$49</div>
-                <div class="plan-period">per month</div>
-                <ul class="plan-features">
-                    <li>20 private repositories</li>
-                    <li>All AI providers</li>
-                    <li>Multi-cloud deployments</li>
-                    <li>Priority support</li>
-                    <li>All integrations</li>
-                    <li>Advanced strategies</li>
+            <div class="pricing-card glass featured">
+                <div class="popular-badge">MOST HONEST VALUE</div>
+                <h3>ReleasePilot Pro</h3>
+                <div class="price">$49<span class="price-period">/month</span></div>
+                <p class="price-description">For teams using Azure DevOps</p>
+                <ul class="pricing-features">
+                    <li>Everything in Classic</li>
+                    <li>Azure DevOps support</li>
+                    <li>Deployment triggers</li>
+                    <li>Slack/Teams notifications</li>
                 </ul>
-                <a href="https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                <a href="https://buy.stripe.com/professional" class="btn btn-primary">Start Free Trial</a>
             </div>
             
             <div class="pricing-card glass">
-                <h3 class="plan-name">Enterprise</h3>
-                <div class="plan-price">$199</div>
-                <div class="plan-period">per month</div>
-                <ul class="plan-features">
-                    <li>Unlimited repositories</li>
-                    <li>Custom AI models</li>
-                    <li>On-premise deployment</li>
-                    <li>24/7 phone support</li>
-                    <li>SSO/SAML</li>
-                    <li>SLA guarantee</li>
+                <h3>ReleasePilot Teams</h3>
+                <div class="price">$99<span class="price-period">/month</span></div>
+                <p class="price-description">With AI Code Review</p>
+                <ul class="pricing-features">
+                    <li>Everything in Pro</li>
+                    <li>AI Code Review</li>
+                    <li>Security scanning</li>
+                    <li>Priority support</li>
                 </ul>
-                <a href="mailto:sales@releasepilot.net" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+                <a href="https://buy.stripe.com/teams" class="btn btn-secondary">Start Free Trial</a>
+            </div>
+            
+            <div class="pricing-card glass">
+                <h3>ReleasePilot Enterprise</h3>
+                <div class="price">$199<span class="price-period">/month</span></div>
+                <p class="price-description">Same thing + promises</p>
+                <ul class="pricing-features">
+                    <li>Everything in Teams</li>
+                    <li>SLA (99.9% uptime)</li>
+                    <li>"Dedicated" support</li>
+                    <li>Invoice billing</li>
+                </ul>
+                <a href="mailto:sales@releasepilot.net" class="btn btn-secondary">Contact Sales</a>
             </div>
         </div>
-        
-        <p style="text-align: center; margin-top: 3rem; color: var(--text-dim);">
-            ✨ Free forever for open source projects • 14-day free trial • No credit card required
-        </p>
     </section>
-    
+
+    <!-- Comparison -->
+    <section id="compare" class="section">
+        <h2 class="section-title">Honest Comparison</h2>
+        <p class="section-subtitle">No BS metrics</p>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>ReleasePilot</th>
+                    <th>Semantic Release</th>
+                    <th>CodeRabbit</th>
+                    <th>Do It Yourself</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AI-Powered</td>
+                    <td class="check">Yes (GPT-4)</td>
+                    <td class="cross">No</td>
+                    <td class="check">Yes</td>
+                    <td class="cross">Your brain</td>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <td>$19-199/mo</td>
+                    <td>Free</td>
+                    <td>$30/mo</td>
+                    <td>Your time</td>
+                </tr>
+                <tr>
+                    <td>Setup Time</td>
+                    <td>5 minutes</td>
+                    <td>30 minutes</td>
+                    <td>10 minutes</td>
+                    <td>0 minutes</td>
+                </tr>
+                <tr>
+                    <td>Code Review</td>
+                    <td class="check">Yes (Azure)</td>
+                    <td class="cross">No</td>
+                    <td class="check">Yes</td>
+                    <td class="cross">No</td>
+                </tr>
+                <tr>
+                    <td>Release Notes</td>
+                    <td class="check">AI Generated</td>
+                    <td>Template</td>
+                    <td class="cross">No</td>
+                    <td>Manual</td>
+                </tr>
+                <tr>
+                    <td>Best For</td>
+                    <td>Lazy developers</td>
+                    <td>Config lovers</td>
+                    <td>Code quality</td>
+                    <td>Control freaks</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+        <h2 class="section-title">Honest FAQ</h2>
+        
+        <div class="faq-grid">
+            <div class="faq-item glass">
+                <h3>Will this replace my release manager?</h3>
+                <p>No. It's just a tool that writes release notes faster.</p>
+            </div>
+            
+            <div class="faq-item glass">
+                <h3>Is my code safe?</h3>
+                <p>We don't read source code, only commit messages. OpenAI sees these.</p>
+            </div>
+            
+            <div class="faq-item glass">
+                <h3>What if AI writes wrong notes?</h3>
+                <p>Always review before publishing. AI isn't perfect.</p>
+            </div>
+            
+            <div class="faq-item glass">
+                <h3>Is it worth $49/month?</h3>
+                <p>If you spend >2 hours/month on release notes, probably yes.</p>
+            </div>
+            
+            <div class="faq-item glass">
+                <h3>Why not use free tools?</h3>
+                <p>Free tools need more setup and don't use AI. You pay for convenience.</p>
+            </div>
+            
+            <div class="faq-item glass">
+                <h3>Can I cancel anytime?</h3>
+                <p>Yes. No contracts. Cancel in Stripe dashboard.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Try It Free (Sort Of)</h2>
+            <p>You need an OpenAI key ($5), but we have a 7-day trial</p>
+            <div class="cta-buttons">
+                <a href="https://github.com/marketplace/actions/releasepilot" class="btn btn-primary">GitHub Marketplace</a>
+                <a href="#pricing" class="btn btn-secondary">See Pricing</a>
+            </div>
+            <p class="small">No credit card for GitHub Action. Card needed for Azure DevOps.</p>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
-        <div class="logo" style="font-size: 1.5rem; margin-bottom: 1rem;">ReleasePilot</div>
-        <p>© 2025 ReleasePilot.net • Next-Generation DevOps Automation</p>
-        <div class="footer-links">
-            <a href="https://github.com/marketplace/actions/releasepilot">GitHub</a>
-            <a href="mailto:support@releasepilot.net">Support</a>
-            <a href="https://docs.releasepilot.net">Documentation</a>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Product</h4>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#compare">Compare</a>
+                <a href="/docs">Documentation</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="/marketing/IDIOT_PROOF_GUIDE.md">Setup Guide</a>
+                <a href="/marketing/HONEST_TECHNICAL_DOCS.md">Technical Docs</a>
+                <a href="https://github.com/geppix140269/release-pilot">GitHub</a>
+                <a href="https://status.releasepilot.net">Status</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Company</h4>
+                <a href="/about.html">About</a>
+                <a href="mailto:support@releasepilot.net">Support</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>The Truth</h4>
+                <p>We're a small tool that saves you time on releases. Not a revolution, just convenient.</p>
+                <p style="font-size: 0.9rem; opacity: 0.7;">Built by developers who hate writing release notes.</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 ReleasePilot. Made with coffee and mild frustration.</p>
         </div>
     </footer>
     
-    <script>
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-        
-        // Add parallax effect on scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallax = document.querySelector('.bg-animation::before');
-            if (parallax) {
-                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
-            }
-        });
-        
-        // Analytics
-        function trackEvent(type, data = {}) {
-            console.log('Event:', type, data);
-            // Add your analytics here
-        }
-        
-        // Track button clicks
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function() {
-                trackEvent('click', {
-                    element: 'button',
-                    label: this.textContent,
-                    href: this.href
-                });
-            });
-        });
-    </script>
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/analytics.js"></script>
 </body>
 </html>

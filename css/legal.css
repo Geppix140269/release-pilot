@@ -1,0 +1,223 @@
+/* Legal Pages Specific Styles */
+.legal-hero {
+    padding: 100px 0 60px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.legal-hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.legal-updated {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.legal-content {
+    padding: 60px 0;
+}
+
+.legal-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.legal-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+}
+
+.legal-card h3 {
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.legal-card ul {
+    list-style-position: inside;
+    margin-left: 1rem;
+}
+
+.legal-card ul li {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.legal-card ul li strong {
+    color: var(--text-primary);
+}
+
+.company-info {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.company-info p {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.info-box {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.warning-box {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.contact-grid div {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.contact-grid h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Tables */
+.cookie-table,
+.gdpr-table,
+.retention-table,
+.tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+
+.cookie-table th,
+.gdpr-table th,
+.retention-table th {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.cookie-table td,
+.gdpr-table td,
+.retention-table td,
+.tech-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+}
+
+.tech-table td:first-child {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.cookie-table tbody tr:hover,
+.gdpr-table tbody tr:hover,
+.retention-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Cookie Consent Options */
+.consent-options {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.cookie-option {
+    margin-bottom: 1rem;
+}
+
+.cookie-option label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.cookie-option input[type="checkbox"] {
+    margin-right: 0.75rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.cookie-option input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Authority Info */
+.authority-info {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.authority-info p {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .legal-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .legal-card {
+        padding: 1.5rem;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cookie-table,
+    .gdpr-table,
+    .retention-table {
+        font-size: 0.9rem;
+    }
+    
+    .cookie-table th,
+    .gdpr-table th,
+    .retention-table th,
+    .cookie-table td,
+    .gdpr-table td,
+    .retention-table td {
+        padding: 0.5rem;
+    }
+}

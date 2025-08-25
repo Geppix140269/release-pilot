@@ -1,0 +1,114 @@
+# Example Azure Pipeline with AI Code Review for Pull Requests
+# This pipeline runs on every PR and provides AI-powered code review
+
+trigger: none  # Don't run on commits
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+      - feature/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: ReleasePilot-Variables  # Contains OPENAI_API_KEY
+
+stages:
+  - stage: CodeReview
+    displayName: 'AI Code Review'
+    jobs:
+      - job: ReviewJob
+        displayName: 'Analyze Pull Request'
+        steps:
+          # First, run your normal build/test steps
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              npm ci
+              npm run build
+              npm test
+            displayName: 'Build and Test'
+            continueOnError: true  # Continue even if tests fail to get code review
+
+          # AI Code Review
+          - task: ReleasePilot@1
+            displayName: '🔍 AI Code Review'
+            inputs:
+              action: 'pr-review'
+              openaiApiKey: $(OPENAI_API_KEY)
+              azureDevOpsToken: $(System.AccessToken)
+              reviewLevel: 'comprehensive'
+              blockOnCritical: true
+              autoApprove: false
+              includeTestSuggestions: true
+
+          # Display review results
+          - script: |
+              echo "## Code Review Results"
+              echo "Score: $(ReleasePilot.Review.Score)/100"
+              echo "Recommendation: $(ReleasePilot.Review.Recommendation)"
+              echo "Version Bump Needed: $(ReleasePilot.Review.VersionBump)"
+              echo "Deployment Strategy: $(ReleasePilot.Review.DeploymentStrategy)"
+            displayName: '📊 Review Summary'
+
+          # Gate based on score
+          - script: |
+              if [ $(ReleasePilot.Review.Score) -lt 60 ]; then
+                echo "❌ Code quality too low. Please address review comments."
+                exit 1
+              fi
+            displayName: 'Quality Gate'
+            condition: succeeded()
+
+---
+# Alternative: Quick review for draft PRs
+trigger: none
+
+pr:
+  drafts: true
+  branches:
+    include:
+      - '**'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: ReleasePilot@1
+    displayName: '🔍 Quick AI Review (Draft PR)'
+    inputs:
+      action: 'pr-review'
+      openaiApiKey: $(OPENAI_API_KEY)
+      reviewLevel: 'quick'
+      blockOnCritical: false  # Don't block drafts
+      includeTestSuggestions: false
+
+---
+# Security-focused review for sensitive code
+trigger: none
+
+pr:
+  paths:
+    include:
+      - src/auth/**
+      - src/security/**
+      - src/api/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: ReleasePilot@1
+    displayName: '🔒 Security-Focused Review'
+    inputs:
+      action: 'pr-review'
+      openaiApiKey: $(OPENAI_API_KEY)
+      reviewLevel: 'security-focus'
+      blockOnCritical: true
+      autoApprove: false

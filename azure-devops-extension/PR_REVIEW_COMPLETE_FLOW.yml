@@ -1,0 +1,241 @@
+# Complete PR → Review → Merge → Release Flow
+# Shows how ReleasePilot handles the entire development lifecycle
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+# PR Validation Pipeline
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: ReleasePilot-Variables
+
+stages:
+  # ============================================
+  # STAGE 1: Build & Test
+  # ============================================
+  - stage: BuildTest
+    displayName: 'Build and Test'
+    jobs:
+      - job: Build
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            
+          - script: |
+              npm ci
+              npm run build
+            displayName: 'Build Application'
+          
+          - script: |
+              npm test -- --coverage
+            displayName: 'Run Tests with Coverage'
+            continueOnError: true
+          
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/test-results.xml'
+          
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+
+  # ============================================
+  # STAGE 2: AI Code Review
+  # ============================================
+  - stage: CodeReview
+    displayName: 'AI Code Review'
+    dependsOn: BuildTest
+    condition: succeeded()
+    jobs:
+      - job: AIReview
+        displayName: 'ReleasePilot AI Analysis'
+        steps:
+          - task: ReleasePilot@1
+            displayName: '🤖 AI Code Review'
+            name: codeReview
+            inputs:
+              action: 'pr-review'
+              openaiApiKey: $(OPENAI_API_KEY)
+              azureDevOpsToken: $(System.AccessToken)
+              reviewLevel: 'comprehensive'
+              blockOnCritical: true
+              includeTestSuggestions: true
+          
+          - script: |
+              echo "## 📊 Code Review Results"
+              echo "================================"
+              echo "Quality Score: $(codeReview.ReleasePilot.Review.Score)/100"
+              echo "Recommendation: $(codeReview.ReleasePilot.Review.Recommendation)"
+              echo "Version Bump: $(codeReview.ReleasePilot.Review.VersionBump)"
+              echo "Deploy Strategy: $(codeReview.ReleasePilot.Review.DeploymentStrategy)"
+              
+              # Create markdown summary
+              cat > review-summary.md << EOF
+              # AI Code Review Summary
+              
+              | Metric | Value |
+              |--------|-------|
+              | **Quality Score** | $(codeReview.ReleasePilot.Review.Score)/100 |
+              | **Recommendation** | $(codeReview.ReleasePilot.Review.Recommendation) |
+              | **Version Bump** | $(codeReview.ReleasePilot.Review.VersionBump) |
+              | **Deploy Strategy** | $(codeReview.ReleasePilot.Review.DeploymentStrategy) |
+              
+              ## Next Steps
+              1. Review AI comments in the PR
+              2. Address any critical issues
+              3. Merge when score > 80
+              EOF
+            displayName: '📝 Generate Review Report'
+          
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: 'review-summary.md'
+              ArtifactName: 'code-review-report'
+
+  # ============================================
+  # STAGE 3: Quality Gates
+  # ============================================
+  - stage: QualityGates
+    displayName: 'Quality Gates'
+    dependsOn: CodeReview
+    jobs:
+      - job: Gates
+        displayName: 'Check Quality Thresholds'
+        steps:
+          - script: |
+              SCORE=$(codeReview.ReleasePilot.Review.Score)
+              
+              if [ $SCORE -lt 60 ]; then
+                echo "❌ Code quality too low ($SCORE/100)"
+                echo "Please address the review comments before merging."
+                exit 1
+              elif [ $SCORE -lt 80 ]; then
+                echo "⚠️ Code quality acceptable but could be improved ($SCORE/100)"
+                echo "Consider addressing suggestions before merge."
+                exit 0
+              else
+                echo "✅ Code quality excellent ($SCORE/100)"
+                echo "Ready to merge!"
+                exit 0
+              fi
+            displayName: 'Enforce Quality Standards'
+
+# ============================================
+# MAIN BRANCH PIPELINE (After PR Merge)
+# ============================================
+---
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: ReleasePilot-Variables
+
+stages:
+  # ============================================
+  # STAGE 1: Create Release
+  # ============================================
+  - stage: Release
+    displayName: 'Create Release'
+    jobs:
+      - job: ReleaseJob
+        displayName: 'Generate Release'
+        steps:
+          # ReleasePilot uses context from PR review
+          - task: ReleasePilot@1
+            displayName: '🚀 Create AI-Powered Release'
+            name: release
+            inputs:
+              action: 'full-release'
+              openaiApiKey: $(OPENAI_API_KEY)
+              azureDevOpsToken: $(System.AccessToken)
+              versionStrategy: 'semantic'  # Will use PR context if available
+              changelogStyle: 'detailed'
+              includeWorkItems: true
+              deploymentTarget: 'none'  # Deploy in next stage
+          
+          - script: |
+              echo "## 🎉 Release Created"
+              echo "Version: $(release.ReleasePilot.Version)"
+              echo "Changelog:"
+              echo "$(release.ReleasePilot.Changelog)"
+            displayName: 'Display Release Info'
+          
+          - script: |
+              echo "##vso[build.updatebuildnumber]v$(release.ReleasePilot.Version)"
+            displayName: 'Update Build Number'
+
+  # ============================================
+  # STAGE 2: Deploy to Staging
+  # ============================================
+  - stage: DeployStaging
+    displayName: 'Deploy to Staging'
+    dependsOn: Release
+    jobs:
+      - deployment: StagingDeploy
+        displayName: 'Deploy to Staging'
+        environment: 'Staging'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ReleasePilot@1
+                  displayName: '🚀 Deploy to Staging'
+                  inputs:
+                    action: 'deploy-only'
+                    openaiApiKey: $(OPENAI_API_KEY)
+                    deploymentTarget: 'azure-app-service'
+                    deploymentStrategy: 'blue-green'  # Uses PR review recommendation
+                    notifyTeams: true
+                    teamsWebhook: $(TEAMS_WEBHOOK_STAGING)
+
+  # ============================================
+  # STAGE 3: Deploy to Production
+  # ============================================
+  - stage: DeployProduction
+    displayName: 'Deploy to Production'
+    dependsOn: DeployStaging
+    condition: succeeded()
+    jobs:
+      - deployment: ProductionDeploy
+        displayName: 'Deploy to Production'
+        environment: 'Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: ReleasePilot@1
+                  displayName: '🚀 Deploy to Production'
+                  inputs:
+                    action: 'deploy-only'
+                    openaiApiKey: $(OPENAI_API_KEY)
+                    deploymentTarget: 'azure-app-service'
+                    deploymentStrategy: 'canary'  # Safer for production
+                    notifySlack: true
+                    slackWebhook: $(SLACK_WEBHOOK)
+                    notifyTeams: true
+                    teamsWebhook: $(TEAMS_WEBHOOK)
+
+# ============================================
+# BRANCH POLICIES (Set in Azure DevOps UI)
+# ============================================
+# 1. Require PR validation build to pass
+# 2. Require code review score > 80
+# 3. Auto-complete PR when all checks pass
+# 4. Delete source branch after merge

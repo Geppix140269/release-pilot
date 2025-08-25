@@ -1,0 +1,261 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "a8515ec8-7137-4682-9a7d-6e8f3c5b1d2f",
+  "name": "ReleasePilot",
+  "friendlyName": "ReleasePilot - AI Code Review & Release Automation",
+  "description": "AI-powered code review, release automation, versioning, and multi-cloud deployments",
+  "helpMarkDown": "[Learn more about ReleasePilot](https://releasepilot.net/azure-devops)",
+  "category": "Deploy",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "author": "ReleasePilot",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "ReleasePilot: $(action)",
+  "groups": [
+    {
+      "name": "authentication",
+      "displayName": "Authentication",
+      "isExpanded": true
+    },
+    {
+      "name": "codereview",
+      "displayName": "Code Review",
+      "isExpanded": true
+    },
+    {
+      "name": "versioning",
+      "displayName": "Versioning",
+      "isExpanded": true
+    },
+    {
+      "name": "changelog",
+      "displayName": "Changelog",
+      "isExpanded": true
+    },
+    {
+      "name": "deployment",
+      "displayName": "Deployment",
+      "isExpanded": false
+    },
+    {
+      "name": "notifications",
+      "displayName": "Notifications",
+      "isExpanded": false
+    }
+  ],
+  "inputs": [
+    {
+      "name": "action",
+      "type": "pickList",
+      "label": "Action",
+      "defaultValue": "full-release",
+      "required": true,
+      "helpMarkDown": "Choose the release action to perform",
+      "options": {
+        "pr-review": "AI Code Review (for Pull Requests)",
+        "full-release": "Full Release (Version + Changelog + Deploy)",
+        "version-only": "Version Bump Only",
+        "changelog-only": "Generate Changelog Only",
+        "deploy-only": "Deploy Only"
+      }
+    },
+    {
+      "name": "openaiApiKey",
+      "type": "string",
+      "label": "OpenAI API Key",
+      "required": true,
+      "helpMarkDown": "Your OpenAI API key for AI-powered features",
+      "groupName": "authentication"
+    },
+    {
+      "name": "azureDevOpsToken",
+      "type": "string",
+      "label": "Azure DevOps PAT",
+      "defaultValue": "$(System.AccessToken)",
+      "required": true,
+      "helpMarkDown": "Personal Access Token or System.AccessToken for Azure DevOps API",
+      "groupName": "authentication"
+    },
+    {
+      "name": "reviewLevel",
+      "type": "pickList",
+      "label": "Review Level",
+      "defaultValue": "comprehensive",
+      "required": false,
+      "helpMarkDown": "How thorough should the code review be",
+      "groupName": "codereview",
+      "visibleRule": "action = pr-review",
+      "options": {
+        "quick": "Quick (basic issues only)",
+        "standard": "Standard (common issues)",
+        "comprehensive": "Comprehensive (all checks)",
+        "security-focus": "Security Focused"
+      }
+    },
+    {
+      "name": "blockOnCritical",
+      "type": "boolean",
+      "label": "Block on Critical Issues",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "Fail the build if critical issues are found",
+      "groupName": "codereview",
+      "visibleRule": "action = pr-review"
+    },
+    {
+      "name": "autoApprove",
+      "type": "boolean",
+      "label": "Auto-Approve if Score > 80",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Automatically approve PR if quality score exceeds 80",
+      "groupName": "codereview",
+      "visibleRule": "action = pr-review"
+    },
+    {
+      "name": "includeTestSuggestions",
+      "type": "boolean",
+      "label": "Suggest Missing Tests",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "AI suggests test cases for uncovered code",
+      "groupName": "codereview",
+      "visibleRule": "action = pr-review"
+    },
+    {
+      "name": "versionStrategy",
+      "type": "pickList",
+      "label": "Version Strategy",
+      "defaultValue": "semantic",
+      "required": true,
+      "helpMarkDown": "How to determine version bumps",
+      "groupName": "versioning",
+      "options": {
+        "semantic": "Semantic (AI analyzes changes)",
+        "conventional": "Conventional Commits",
+        "manual": "Manual (specify version)",
+        "auto-patch": "Auto Patch",
+        "auto-minor": "Auto Minor",
+        "auto-major": "Auto Major"
+      }
+    },
+    {
+      "name": "manualVersion",
+      "type": "string",
+      "label": "Manual Version",
+      "required": false,
+      "helpMarkDown": "Specify version when using manual strategy (e.g., 2.1.0)",
+      "groupName": "versioning",
+      "visibleRule": "versionStrategy = manual"
+    },
+    {
+      "name": "changelogStyle",
+      "type": "pickList",
+      "label": "Changelog Style",
+      "defaultValue": "conventional",
+      "required": true,
+      "helpMarkDown": "Format for generated changelog",
+      "groupName": "changelog",
+      "options": {
+        "conventional": "Conventional (Added/Fixed/Changed)",
+        "keepachangelog": "Keep a Changelog",
+        "simple": "Simple List",
+        "detailed": "Detailed with Context"
+      }
+    },
+    {
+      "name": "includeWorkItems",
+      "type": "boolean",
+      "label": "Include Work Items",
+      "defaultValue": "true",
+      "required": false,
+      "helpMarkDown": "Include linked Azure Boards work items in changelog",
+      "groupName": "changelog"
+    },
+    {
+      "name": "deploymentTarget",
+      "type": "pickList",
+      "label": "Deployment Target",
+      "defaultValue": "none",
+      "required": false,
+      "helpMarkDown": "Where to deploy after release",
+      "groupName": "deployment",
+      "options": {
+        "none": "No Deployment",
+        "azure-app-service": "Azure App Service",
+        "azure-functions": "Azure Functions",
+        "azure-aks": "Azure Kubernetes Service",
+        "azure-container": "Azure Container Instances",
+        "aws": "AWS",
+        "gcp": "Google Cloud",
+        "docker": "Docker Registry"
+      }
+    },
+    {
+      "name": "deploymentStrategy",
+      "type": "pickList",
+      "label": "Deployment Strategy",
+      "defaultValue": "direct",
+      "required": false,
+      "helpMarkDown": "Deployment strategy to use",
+      "groupName": "deployment",
+      "visibleRule": "deploymentTarget != none",
+      "options": {
+        "direct": "Direct",
+        "blue-green": "Blue-Green",
+        "canary": "Canary",
+        "rolling": "Rolling Update"
+      }
+    },
+    {
+      "name": "notifySlack",
+      "type": "boolean",
+      "label": "Notify Slack",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Send release notification to Slack",
+      "groupName": "notifications"
+    },
+    {
+      "name": "slackWebhook",
+      "type": "string",
+      "label": "Slack Webhook URL",
+      "required": false,
+      "helpMarkDown": "Slack webhook URL for notifications",
+      "groupName": "notifications",
+      "visibleRule": "notifySlack = true"
+    },
+    {
+      "name": "notifyTeams",
+      "type": "boolean",
+      "label": "Notify Microsoft Teams",
+      "defaultValue": "false",
+      "required": false,
+      "helpMarkDown": "Send release notification to Teams",
+      "groupName": "notifications"
+    },
+    {
+      "name": "teamsWebhook",
+      "type": "string",
+      "label": "Teams Webhook URL",
+      "required": false,
+      "helpMarkDown": "Teams webhook URL for notifications",
+      "groupName": "notifications",
+      "visibleRule": "notifyTeams = true"
+    }
+  ],
+  "execution": {
+    "Node10": {
+      "target": "index.js"
+    },
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
