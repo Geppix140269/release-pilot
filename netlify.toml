@@ -8,6 +8,11 @@
   SECRETS_SCAN_ENABLED = "false"
 
 [[redirects]]
+  from = "/"
+  to = "/index-simple.html"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200

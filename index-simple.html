@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReleasePilot - AI Release Automation</title>
+    <meta name="description" content="AI-powered release automation for GitHub & Azure DevOps">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #00d4ff;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: #00d4ff;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            color: #cccccc;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #00d4ff;
+            color: #0a0a0f;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+        }
+        
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            padding: 8px 0;
+            color: #cccccc;
+        }
+        
+        li:before {
+            content: "✓ ";
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ReleasePilot</h1>
+        <p><strong>AI-powered release automation that actually works.</strong></p>
+        <p>Saves you 2-3 hours/month on release notes. No BS.</p>
+        
+        <a href="#pricing" class="btn">See Pricing</a>
+        <a href="#features" class="btn">Learn More</a>
+        
+        <h2 id="features">What It Does</h2>
+        <ul>
+            <li>AI-generated release notes with GPT-4</li>
+            <li>Automatic version bumping</li>
+            <li>AI code review for Azure DevOps</li>
+            <li>Deployment triggers</li>
+            <li>Slack/Teams notifications</li>
+        </ul>
+        
+        <h2>How It Works</h2>
+        <ol style="color: #cccccc; padding-left: 20px;">
+            <li>Get OpenAI API key ($5)</li>
+            <li>Add to your pipeline (5 min setup)</li>
+            <li>Write normal commits</li>
+            <li>Push and let AI do the work</li>
+        </ol>
+        
+        <h2 id="pricing">Honest Pricing</h2>
+        
+        <div class="price-card">
+            <h3>Classic</h3>
+            <div class="price">$19/mo</div>
+            <p>GitHub Actions only</p>
+            <a href="https://buy.stripe.com/classic" class="btn">Start Trial</a>
+        </div>
+        
+        <div class="price-card">
+            <h3>Pro</h3>
+            <div class="price">$49/mo</div>
+            <p>+ Azure DevOps support</p>
+            <a href="https://buy.stripe.com/pro" class="btn">Start Trial</a>
+        </div>
+        
+        <div class="price-card">
+            <h3>Teams</h3>
+            <div class="price">$99/mo</div>
+            <p>+ AI Code Review</p>
+            <a href="https://buy.stripe.com/teams" class="btn">Start Trial</a>
+        </div>
+        
+        <h2>FAQ</h2>
+        <p><strong>Is it worth it?</strong><br>
+        If you spend >2 hours/month on releases, yes.</p>
+        
+        <p><strong>Is my code safe?</strong><br>
+        We only read commit messages, not source code.</p>
+        
+        <p><strong>Can I cancel?</strong><br>
+        Yes, anytime. No contracts.</p>
+        
+        <footer>
+            <p>© 2025 ReleasePilot | 1402 Celsius Ltd, Bulgaria</p>
+            <p>
+                <a href="mailto:support@releasepilot.net" style="color: #00d4ff;">support@releasepilot.net</a> | 
+                <a href="/privacy.html" style="color: #00d4ff;">Privacy</a> | 
+                <a href="/terms.html" style="color: #00d4ff;">Terms</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
