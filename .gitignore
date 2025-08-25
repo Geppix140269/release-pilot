@@ -29,3 +29,5 @@ coverage/
 # Testing
 *.test.js
 *.spec.js
+# Local Netlify folder
+.netlify

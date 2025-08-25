@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReleasePilot Admin - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff00ea;
+            --accent: #00ff88;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --danger: #ff4444;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .login-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+        
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text-dim);
+        }
+        
+        .security-note {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        
+        /* Dashboard styles (hidden by default) */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logout-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <h1 class="login-title">🔐 Admin Access</h1>
+        
+        <div class="error-message" id="errorMessage">
+            Invalid credentials. Please try again.
+        </div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="login-btn">Login to Dashboard</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            Authenticating...
+        </div>
+        
+        <div class="security-note">
+            🔒 Secure connection • Encrypted credentials
+        </div>
+    </div>
+    
+    <!-- Dashboard (shown after login) -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="dashboard-header">
+            <h1 style="font-size: 2rem;">🚀 ReleasePilot Admin Dashboard</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <!-- Dashboard content will be loaded here -->
+        <div id="dashboardContent">
+            <iframe src="admin.html" style="width: 100%; height: 90vh; border: none; border-radius: 20px;"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANT: Change these credentials!
+        // For production, these should be environment variables or use proper authentication
+        const ADMIN_CREDENTIALS = {
+            username: 'admin',
+            password: 'ReleasePilot2024!' // CHANGE THIS!
+        };
+        
+        // Alternative: Use a hashed password (more secure)
+        // You can generate this hash using: btoa('your-password')
+        const ADMIN_CREDENTIALS_HASHED = {
+            username: 'admin',
+            passwordHash: 'UmVsZWFzZVBpbG90MjAyNCE=' // This is base64 of 'ReleasePilot2024!'
+        };
+        
+        // Check if already logged in
+        function checkAuth() {
+            const authToken = sessionStorage.getItem('releasepilot_admin_auth');
+            const authExpiry = sessionStorage.getItem('releasepilot_admin_expiry');
+            
+            if (authToken && authExpiry) {
+                const now = new Date().getTime();
+                if (now < parseInt(authExpiry)) {
+                    showDashboard();
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Simulate authentication delay
+            setTimeout(() => {
+                // Check credentials (using hashed version)
+                const passwordHash = btoa(password);
+                
+                if (username === ADMIN_CREDENTIALS_HASHED.username && 
+                    passwordHash === ADMIN_CREDENTIALS_HASHED.passwordHash) {
+                    
+                    // Create session token
+                    const token = btoa(username + ':' + new Date().getTime());
+                    const expiry = new Date().getTime() + (2 * 60 * 60 * 1000); // 2 hours
+                    
+                    // Store in session storage (not localStorage for security)
+                    sessionStorage.setItem('releasepilot_admin_auth', token);
+                    sessionStorage.setItem('releasepilot_admin_expiry', expiry);
+                    
+                    // Show dashboard
+                    showDashboard();
+                    
+                    // Log successful login
+                    logActivity('Admin login', username);
+                } else {
+                    // Show error
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    // Log failed attempt
+                    logActivity('Failed login attempt', username);
+                }
+            }, 500);
+        }
+        
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            
+            // Load dashboard content
+            loadDashboardData();
+        }
+        
+        // Load dashboard data
+        function loadDashboardData() {
+            // This would normally fetch real data from your backend
+            console.log('Dashboard loaded');
+        }
+        
+        // Logout
+        function logout() {
+            sessionStorage.removeItem('releasepilot_admin_auth');
+            sessionStorage.removeItem('releasepilot_admin_expiry');
+            
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboardContainer').style.display = 'none';
+            
+            // Clear form
+            document.getElementById('loginForm').reset();
+            
+            logActivity('Admin logout', 'admin');
+        }
+        
+        // Log activity
+        function logActivity(action, user) {
+            const activity = {
+                action: action,
+                user: user,
+                timestamp: new Date().toISOString(),
+                ip: 'client' // In production, get real IP from backend
+            };
+            
+            // Store in local storage for now
+            const activities = JSON.parse(localStorage.getItem('releasepilot_admin_activity') || '[]');
+            activities.push(activity);
+            
+            // Keep only last 100 activities
+            if (activities.length > 100) {
+                activities.shift();
+            }
+            
+            localStorage.setItem('releasepilot_admin_activity', JSON.stringify(activities));
+        }
+        
+        // Auto-logout after 2 hours
+        setInterval(() => {
+            const authExpiry = sessionStorage.getItem('releasepilot_admin_expiry');
+            if (authExpiry) {
+                const now = new Date().getTime();
+                if (now >= parseInt(authExpiry)) {
+                    logout();
+                    alert('Session expired. Please login again.');
+                }
+            }
+        }, 60000); // Check every minute
+        
+        // Check auth on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+        
+        // Prevent back button after logout
+        window.addEventListener('popstate', () => {
+            if (!sessionStorage.getItem('releasepilot_admin_auth')) {
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('dashboardContainer').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReleasePilot Admin - REAL Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff00ea;
+            --accent: #00ff88;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --success: #00ff88;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .real-data-badge {
+            display: inline-block;
+            background: var(--success);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+        
+        .last-updated {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .metric-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-change {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .metric-change.positive {
+            color: var(--success);
+        }
+        
+        .metric-change.negative {
+            color: var(--danger);
+        }
+        
+        .chart-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .table-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--glass-border);
+            color: var(--primary);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 10px;
+            padding: 20px 0;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            min-height: 5px;
+            transition: all 0.3s;
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .activity-feed {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .activity-time {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            🚀 ReleasePilot Analytics
+            <span class="real-data-badge">REAL DATA</span>
+        </h1>
+        <div class="last-updated">Auto-updates every 30 seconds • Last updated: <span id="lastUpdated"></span></div>
+        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Now</button>
+    </div>
+
+    <!-- REAL Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">Visitors Today (REAL)</div>
+            <div class="metric-value" id="visitorsToday">0</div>
+            <div class="metric-change" id="visitorsChange">Calculating...</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Page Views Today (REAL)</div>
+            <div class="metric-value" id="pageViewsToday">0</div>
+            <div class="metric-change" id="pageViewsChange">Calculating...</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Sessions Today (REAL)</div>
+            <div class="metric-value" id="sessionsToday">0</div>
+            <div class="metric-change" id="sessionsChange">Calculating...</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Button Clicks Today</div>
+            <div class="metric-value" id="clicksToday">0</div>
+            <div class="metric-change" id="clicksChange">Tracking clicks...</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Checkout Initiations</div>
+            <div class="metric-value" id="checkoutsToday">0</div>
+            <div class="metric-change positive" id="checkoutsChange">Stripe buttons clicked</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Your Visitor ID</div>
+            <div class="metric-value" style="font-size: 1rem;" id="visitorId">...</div>
+            <div class="metric-change">Unique identifier</div>
+        </div>
+    </div>
+
+    <!-- Real-time Chart -->
+    <div class="chart-container">
+        <h2 class="chart-title">📈 Last 7 Days Traffic (REAL DATA)</h2>
+        <div class="chart-bar" id="trafficChart">
+            <!-- Will be populated with real data -->
+        </div>
+    </div>
+
+    <!-- Top Pages -->
+    <div class="two-column">
+        <div class="table-container">
+            <h2 class="chart-title">📄 Top Pages</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Page</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody id="topPages">
+                    <tr><td colspan="2">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="table-container">
+            <h2 class="chart-title">🌐 Top Referrers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Visits</th>
+                    </tr>
+                </thead>
+                <tbody id="topReferrers">
+                    <tr><td colspan="2">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Events -->
+    <div class="activity-feed">
+        <h2 class="chart-title">🔔 Recent Events (REAL)</h2>
+        <div id="eventsFeed">
+            <div class="activity-item">
+                <div class="activity-time">Waiting for events...</div>
+                <div class="activity-description">Events will appear here as they happen</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="analytics.js"></script>
+    <script>
+        // Load REAL data from localStorage
+        function loadRealData() {
+            const summary = window.ReleasePilotAnalytics ? 
+                window.ReleasePilotAnalytics.getAnalyticsSummary() : 
+                { today: { pageViews: 0, uniqueVisitors: 0, sessions: 0 } };
+            
+            // Update metrics
+            document.getElementById('visitorsToday').textContent = summary.today.uniqueVisitors;
+            document.getElementById('pageViewsToday').textContent = summary.today.pageViews;
+            document.getElementById('sessionsToday').textContent = summary.today.sessions;
+            
+            // Calculate changes
+            if (summary.yesterday.uniqueVisitors > 0) {
+                const change = Math.round(((summary.today.uniqueVisitors - summary.yesterday.uniqueVisitors) / summary.yesterday.uniqueVisitors) * 100);
+                document.getElementById('visitorsChange').textContent = change >= 0 ? `↑ ${change}% from yesterday` : `↓ ${Math.abs(change)}% from yesterday`;
+                document.getElementById('visitorsChange').className = change >= 0 ? 'metric-change positive' : 'metric-change negative';
+            }
+            
+            // Update 7-day chart with REAL data
+            if (summary.last7Days) {
+                updateChart(summary.last7Days);
+            }
+            
+            // Update top pages
+            if (summary.topPages) {
+                updateTopPages(summary.topPages);
+            }
+            
+            // Update top referrers
+            if (summary.topReferrers) {
+                updateTopReferrers(summary.topReferrers);
+            }
+            
+            // Load events
+            loadEvents();
+            
+            // Show visitor ID
+            if (window.ReleasePilotAnalytics) {
+                document.getElementById('visitorId').textContent = window.ReleasePilotAnalytics.getVisitorId();
+            }
+            
+            // Update timestamp
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        }
+        
+        function updateChart(data) {
+            const maxViews = Math.max(...data.map(d => d.pageViews), 1);
+            const chartHTML = data.map(day => {
+                const height = (day.pageViews / maxViews) * 100;
+                const date = new Date(day.date);
+                const label = date.toLocaleDateString('en', { weekday: 'short' });
+                
+                return `
+                    <div class="bar" style="height: ${height}%">
+                        <span class="bar-value">${day.pageViews}</span>
+                        <span class="bar-label">${label}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('trafficChart').innerHTML = chartHTML;
+        }
+        
+        function updateTopPages(pages) {
+            const html = pages.length > 0 ? 
+                pages.map(p => `<tr><td>${p.page}</td><td>${p.count}</td></tr>`).join('') :
+                '<tr><td colspan="2">No data yet</td></tr>';
+            document.getElementById('topPages').innerHTML = html;
+        }
+        
+        function updateTopReferrers(referrers) {
+            const html = referrers.length > 0 ?
+                referrers.map(r => `<tr><td>${r.referrer}</td><td>${r.count}</td></tr>`).join('') :
+                '<tr><td colspan="2">No data yet</td></tr>';
+            document.getElementById('topReferrers').innerHTML = html;
+        }
+        
+        function loadEvents() {
+            const events = JSON.parse(localStorage.getItem('releasepilot_events') || '[]');
+            const recentEvents = events.slice(-10).reverse();
+            
+            if (recentEvents.length > 0) {
+                const html = recentEvents.map(event => {
+                    const time = new Date(event.timestamp);
+                    const timeAgo = getTimeAgo(time);
+                    
+                    return `
+                        <div class="activity-item">
+                            <div class="activity-time">${timeAgo}</div>
+                            <div class="activity-description">
+                                ${event.name}: ${JSON.stringify(event.data)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('eventsFeed').innerHTML = html;
+            }
+            
+            // Count button clicks
+            const clickEvents = events.filter(e => e.name === 'button_click');
+            const todayClicks = clickEvents.filter(e => {
+                const eventDate = new Date(e.timestamp).toDateString();
+                const today = new Date().toDateString();
+                return eventDate === today;
+            }).length;
+            
+            document.getElementById('clicksToday').textContent = todayClicks;
+            
+            // Count checkout initiations
+            const checkoutEvents = events.filter(e => e.name === 'checkout_initiated');
+            document.getElementById('checkoutsToday').textContent = checkoutEvents.length;
+        }
+        
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+            return Math.floor(seconds / 86400) + ' days ago';
+        }
+        
+        function refreshData() {
+            loadRealData();
+            
+            // Animate button
+            const btn = document.querySelector('.refresh-btn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+        
+        // Load data on page load
+        loadRealData();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadRealData, 30000);
+        
+        // Track this admin page view
+        if (window.ReleasePilotAnalytics) {
+            window.ReleasePilotAnalytics.trackEvent('admin_dashboard_viewed', {
+                timestamp: new Date().toISOString()
+            });
+        }
+    </script>
+</body>
+</html>

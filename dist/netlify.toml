@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && mkdir -p dist && cp *.html *.js dist/ && cp -f favicon.* *.png site.webmanifest dist/ 2>/dev/null || true"
+  command = "npm install && mkdir -p dist && cp index.html dist/ && cp -f favicon.* *.png site.webmanifest dist/ 2>/dev/null || true"
   functions = "netlify/functions"
   publish = "dist"
 

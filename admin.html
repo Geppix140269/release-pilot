@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReleasePilot Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff00ea;
+            --accent: #00ff88;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --success: #00ff88;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .last-updated {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .metric-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-change {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .metric-change.positive {
+            color: var(--success);
+        }
+        
+        .metric-change.negative {
+            color: var(--danger);
+        }
+        
+        .chart-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+        
+        .activity-feed {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+        
+        .activity-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .activity-time {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+        
+        .activity-description {
+            margin-top: 0.5rem;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .table-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--glass-border);
+            color: var(--primary);
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+        }
+        
+        .status-trial {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-churned {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 10px;
+            padding: 20px 0;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            min-height: 5px;
+            transition: all 0.3s;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">🚀 ReleasePilot Admin Dashboard</h1>
+        <div class="last-updated">Last updated: <span id="lastUpdated"></span></div>
+        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Data</button>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">Website Visitors Today</div>
+            <div class="metric-value" id="visitorsToday">0</div>
+            <div class="metric-change positive" id="visitorsChange">↑ 0% from yesterday</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">GitHub Stars</div>
+            <div class="metric-value" id="githubStars">0</div>
+            <div class="metric-change positive" id="starsChange">+0 today</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Active Trials</div>
+            <div class="metric-value" id="activeTrials">0</div>
+            <div class="metric-change" id="trialsChange">0 started today</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Paying Customers</div>
+            <div class="metric-value" id="payingCustomers">0</div>
+            <div class="metric-change positive" id="customersChange">+0 this week</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Monthly Revenue (MRR)</div>
+            <div class="metric-value" id="mrr">$0</div>
+            <div class="metric-change positive" id="mrrChange">↑ 0% from last month</div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="metric-label">Conversion Rate</div>
+            <div class="metric-value" id="conversionRate">0%</div>
+            <div class="metric-change" id="conversionChange">Trial → Paid</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="two-column">
+        <div class="chart-container">
+            <h2 class="chart-title">📈 Daily Traffic (Last 7 Days)</h2>
+            <div class="chart-bar" id="trafficChart">
+                <div class="bar" style="height: 40%">
+                    <span class="bar-value">40</span>
+                    <span class="bar-label">Mon</span>
+                </div>
+                <div class="bar" style="height: 60%">
+                    <span class="bar-value">60</span>
+                    <span class="bar-label">Tue</span>
+                </div>
+                <div class="bar" style="height: 45%">
+                    <span class="bar-value">45</span>
+                    <span class="bar-label">Wed</span>
+                </div>
+                <div class="bar" style="height: 80%">
+                    <span class="bar-value">80</span>
+                    <span class="bar-label">Thu</span>
+                </div>
+                <div class="bar" style="height: 90%">
+                    <span class="bar-value">90</span>
+                    <span class="bar-label">Fri</span>
+                </div>
+                <div class="bar" style="height: 70%">
+                    <span class="bar-value">70</span>
+                    <span class="bar-label">Sat</span>
+                </div>
+                <div class="bar" style="height: 100%">
+                    <span class="bar-value">100</span>
+                    <span class="bar-label">Today</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">💰 Revenue Growth</h2>
+            <div class="chart-bar" id="revenueChart">
+                <div class="bar" style="height: 20%; background: linear-gradient(to top, #00ff88, #00d4ff)">
+                    <span class="bar-value">$0</span>
+                    <span class="bar-label">Week 1</span>
+                </div>
+                <div class="bar" style="height: 35%; background: linear-gradient(to top, #00ff88, #00d4ff)">
+                    <span class="bar-value">$147</span>
+                    <span class="bar-label">Week 2</span>
+                </div>
+                <div class="bar" style="height: 60%; background: linear-gradient(to top, #00ff88, #00d4ff)">
+                    <span class="bar-value">$392</span>
+                    <span class="bar-label">Week 3</span>
+                </div>
+                <div class="bar" style="height: 100%; background: linear-gradient(to top, #00ff88, #00d4ff)">
+                    <span class="bar-value">$637</span>
+                    <span class="bar-label">This Week</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Table -->
+    <div class="table-container">
+        <h2 class="chart-title">👥 Recent Customers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Plan</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>MRR</th>
+                </tr>
+            </thead>
+            <tbody id="customerTable">
+                <tr>
+                    <td colspan="5" class="loading">Loading customer data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="activity-feed">
+        <h2 class="activity-title">🔔 Recent Activity</h2>
+        <div id="activityFeed">
+            <div class="activity-item">
+                <div class="activity-time">Just now</div>
+                <div class="activity-description">Dashboard loaded</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        function initDashboard() {
+            updateLastUpdated();
+            loadMetrics();
+            loadCustomers();
+            loadActivity();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        }
+        
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleString();
+        }
+        
+        function loadMetrics() {
+            // These would normally come from your analytics API
+            // For now, using localStorage to persist data
+            const metrics = JSON.parse(localStorage.getItem('releasepilot_metrics') || '{}');
+            
+            // Website visitors (simulate with random for demo)
+            const visitorsToday = metrics.visitorsToday || Math.floor(Math.random() * 50) + 20;
+            document.getElementById('visitorsToday').textContent = visitorsToday;
+            document.getElementById('visitorsChange').textContent = `↑ ${Math.floor(Math.random() * 30)}% from yesterday`;
+            
+            // GitHub stars
+            const stars = metrics.githubStars || 0;
+            document.getElementById('githubStars').textContent = stars;
+            document.getElementById('starsChange').textContent = `+${Math.floor(Math.random() * 5)} today`;
+            
+            // Trials
+            const trials = metrics.activeTrials || 0;
+            document.getElementById('activeTrials').textContent = trials;
+            document.getElementById('trialsChange').textContent = `${Math.floor(Math.random() * 3)} started today`;
+            
+            // Customers
+            const customers = metrics.payingCustomers || 0;
+            document.getElementById('payingCustomers').textContent = customers;
+            document.getElementById('customersChange').textContent = `+${Math.floor(Math.random() * 2)} this week`;
+            
+            // MRR
+            const mrr = metrics.mrr || 0;
+            document.getElementById('mrr').textContent = `$${mrr}`;
+            document.getElementById('mrrChange').textContent = `↑ ${Math.floor(Math.random() * 15)}% from last month`;
+            
+            // Conversion rate
+            const conversionRate = trials > 0 ? Math.floor((customers / trials) * 100) : 0;
+            document.getElementById('conversionRate').textContent = `${conversionRate}%`;
+        }
+        
+        function loadCustomers() {
+            // Sample customer data - replace with real data from your database
+            const customers = [
+                { name: 'TechStartup Inc', plan: 'Professional', status: 'active', started: '2024-12-20', mrr: 49 },
+                { name: 'DevAgency Co', plan: 'Enterprise', status: 'active', started: '2024-12-19', mrr: 199 },
+                { name: 'CloudSoft Ltd', plan: 'Starter', status: 'trial', started: '2024-12-21', mrr: 0 },
+                { name: 'WebDev Pro', plan: 'Professional', status: 'active', started: '2024-12-18', mrr: 49 },
+                { name: 'StartupXYZ', plan: 'Starter', status: 'churned', started: '2024-12-15', mrr: 0 }
+            ];
+            
+            const tableBody = document.getElementById('customerTable');
+            tableBody.innerHTML = customers.map(customer => `
+                <tr>
+                    <td>${customer.name}</td>
+                    <td>${customer.plan}</td>
+                    <td>
+                        <span class="status-badge status-${customer.status}">
+                            ${customer.status.toUpperCase()}
+                        </span>
+                    </td>
+                    <td>${customer.started}</td>
+                    <td>$${customer.mrr}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function loadActivity() {
+            const activities = [
+                { time: '2 minutes ago', description: 'New trial started: CloudSoft Ltd' },
+                { time: '15 minutes ago', description: 'Payment received: TechStartup Inc ($49)' },
+                { time: '1 hour ago', description: 'New GitHub star received' },
+                { time: '2 hours ago', description: 'Website visitor from Product Hunt' },
+                { time: '3 hours ago', description: 'New signup: WebDev Pro' },
+                { time: '5 hours ago', description: 'Deployment successful: v1.2.0' }
+            ];
+            
+            const feedContainer = document.getElementById('activityFeed');
+            feedContainer.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-time">${activity.time}</div>
+                    <div class="activity-description">${activity.description}</div>
+                </div>
+            `).join('');
+        }
+        
+        function refreshData() {
+            updateLastUpdated();
+            loadMetrics();
+            loadCustomers();
+            loadActivity();
+            
+            // Animate refresh button
+            const btn = document.querySelector('.refresh-btn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+        
+        // Track page views (simple analytics)
+        function trackPageView() {
+            const metrics = JSON.parse(localStorage.getItem('releasepilot_metrics') || '{}');
+            metrics.visitorsToday = (metrics.visitorsToday || 0) + 1;
+            localStorage.setItem('releasepilot_metrics', JSON.stringify(metrics));
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+        
+        // Simple visitor tracking
+        if (!sessionStorage.getItem('visited')) {
+            trackPageView();
+            sessionStorage.setItem('visited', 'true');
+        }
+    </script>
+</body>
+</html>

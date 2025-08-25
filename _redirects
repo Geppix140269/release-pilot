@@ -1,0 +1,11 @@
+# Netlify redirects and access control
+
+# Protect admin pages with Netlify Identity
+/admin/*  200!  Role=admin
+/admin-protected.html  200!  Role=admin
+
+# Alternative: Password protection (requires Netlify Pro)
+# /admin/* /.netlify/identity/login 401!
+
+# Redirect old admin to protected version
+/admin.html  /admin-protected.html  301

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReleasePilot - AI-Powered DevOps Automation Platform</title>
+    <meta name="description" content="Complete CI/CD automation with AI. Deploy to AWS, Azure, GCP, Kubernetes. Automated releases, versioning, and multi-cloud deployments.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://releasepilot.net/">
+    <meta property="og:title" content="ReleasePilot - Next-Gen DevOps Automation">
+    <meta property="og:description" content="AI-powered CI/CD platform. Deploy anywhere. Blue-green, canary, rolling deployments.">
+    <meta property="og:image" content="https://releasepilot.net/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://releasepilot.net/">
+    <meta property="twitter:title" content="ReleasePilot - Next-Gen DevOps Automation">
+    <meta property="twitter:image" content="https://releasepilot.net/og-image.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff00ea;
+            --accent: #00ff88;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 100%);
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 10%),
+                        radial-gradient(circle, var(--secondary) 0%, transparent 15%),
+                        radial-gradient(circle, var(--accent) 0%, transparent 20%);
+            animation: rotate 30s linear infinite;
+            opacity: 0.1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Glassmorphism Cards */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 212, 255, 0.1);
+        }
+        
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px 0 rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        
+        h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+        
+        .btn-secondary {
+            background: var(--glass);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 4rem;
+            font-size: 1.2rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        
+        .feature-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .feature-description {
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+        
+        /* CI/CD Section */
+        .cicd-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(255, 0, 234, 0.05) 100%);
+        }
+        
+        .deployment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+        
+        .deployment-card {
+            padding: 2rem;
+            text-align: center;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--dark-light), var(--dark-light)),
+                            linear-gradient(135deg, var(--primary), var(--secondary));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            border-radius: 20px;
+        }
+        
+        .deployment-card:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s;
+        }
+        
+        .provider-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .provider-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .provider-features {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .pricing-card {
+            padding: 3rem 2rem;
+            position: relative;
+            text-align: center;
+        }
+        
+        .pricing-card.popular {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 0, 234, 0.1) 100%);
+            border: 2px solid var(--primary);
+        }
+        
+        .pricing-card.popular::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .plan-name {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .plan-price {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .plan-period {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .plan-features li {
+            padding: 0.5rem 0;
+            color: var(--text-dim);
+        }
+        
+        .plan-features li::before {
+            content: '✓ ';
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-dim);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .features-grid,
+            .deployment-grid,
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+        }
+        
+        /* Glow Effects */
+        .glow {
+            position: relative;
+        }
+        
+        .glow::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.3;
+            filter: blur(30px);
+            z-index: -1;
+        }
+        
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">ReleasePilot</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#cicd">CI/CD</a>
+                <a href="#pricing">Pricing</a>
+                <a href="https://github.com/marketplace/actions/releasepilot" target="_blank">GitHub</a>
+                <a href="#" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge float">🚀 NEW: Multi-Cloud CI/CD Platform</div>
+            <h1>Deploy Everywhere<br>With One Action</h1>
+            <p class="hero-subtitle">
+                AI-powered DevOps automation that handles releases, versioning, and deployments across AWS, Azure, GCP, Kubernetes, and more. From PR to production in minutes.
+            </p>
+            
+            <div class="btn-group">
+                <a href="#pricing" class="btn btn-primary glow">Start Free Trial</a>
+                <a href="https://github.com/marketplace/actions/releasepilot" class="btn btn-secondary">View on GitHub</a>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">10hrs</div>
+                    <div class="stat-label">Saved Monthly</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Cloud Providers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Less Errors</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">2min</div>
+                    <div class="stat-label">Setup Time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Complete DevOps Automation</h2>
+        <p class="section-subtitle">Everything you need for modern software delivery</p>
+        
+        <div class="features-grid">
+            <div class="feature-card glass">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title">AI-Powered PR Summaries</h3>
+                <p class="feature-description">
+                    GPT-4 and Claude automatically generate comprehensive PR descriptions, saving hours of documentation work.
+                </p>
+            </div>
+            
+            <div class="feature-card glass">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Semantic Versioning</h3>
+                <p class="feature-description">
+                    Automatically calculate version bumps based on conventional commits. Major, minor, patch - all handled.
+                </p>
+            </div>
+            
+            <div class="feature-card glass">
+                <div class="feature-icon">📝</div>
+                <h3 class="feature-title">Changelog Management</h3>
+                <p class="feature-description">
+                    Keep CHANGELOG.md always up-to-date with categorized entries and comparison links between versions.
+                </p>
+            </div>
+            
+            <div class="feature-card glass">
+                <div class="feature-icon">🚀</div>
+                <h3 class="feature-title">Multi-Cloud Deployments</h3>
+                <p class="feature-description">
+                    Deploy to AWS, Azure, GCP, Kubernetes, Docker, Vercel, Netlify, or Heroku with one configuration.
+                </p>
+            </div>
+            
+            <div class="feature-card glass">
+                <div class="feature-icon">🔄</div>
+                <h3 class="feature-title">Advanced Strategies</h3>
+                <p class="feature-description">
+                    Blue-green, canary, and rolling deployments with automatic health checks and instant rollback.
+                </p>
+            </div>
+            
+            <div class="feature-card glass">
+                <div class="feature-icon">🔔</div>
+                <h3 class="feature-title">Team Notifications</h3>
+                <p class="feature-description">
+                    Keep your team informed with Slack, Teams, and webhook notifications for all deployment events.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CI/CD Section -->
+    <section class="cicd-section" id="cicd">
+        <div class="container">
+            <h2 class="section-title">Deploy Anywhere</h2>
+            <p class="section-subtitle">One configuration, infinite possibilities</p>
+            
+            <div class="deployment-grid">
+                <div class="deployment-card">
+                    <div class="provider-logo">☁️</div>
+                    <div class="provider-name">AWS</div>
+                    <div class="provider-features">ECS, Lambda, Elastic Beanstalk</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">🔷</div>
+                    <div class="provider-name">Azure</div>
+                    <div class="provider-features">App Service, Functions, AKS</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">🔵</div>
+                    <div class="provider-name">Google Cloud</div>
+                    <div class="provider-features">Cloud Run, App Engine, GKE</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">⚓</div>
+                    <div class="provider-name">Kubernetes</div>
+                    <div class="provider-features">Any K8s Cluster</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">🐳</div>
+                    <div class="provider-name">Docker</div>
+                    <div class="provider-features">Registry & Swarm</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">▲</div>
+                    <div class="provider-name">Vercel</div>
+                    <div class="provider-features">Next.js & Frontend</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">🔺</div>
+                    <div class="provider-name">Netlify</div>
+                    <div class="provider-features">Static Sites & JAMstack</div>
+                </div>
+                
+                <div class="deployment-card">
+                    <div class="provider-logo">🟣</div>
+                    <div class="provider-name">Heroku</div>
+                    <div class="provider-features">Apps & Containers</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem;">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Deployment Strategies</h3>
+                <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 2rem;">
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔵🟢</div>
+                        <div style="font-weight: 600;">Blue-Green</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Zero downtime</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🐤</div>
+                        <div style="font-weight: 600;">Canary</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Gradual rollout</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎢</div>
+                        <div style="font-weight: 600;">Rolling</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Incremental updates</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        <p class="section-subtitle">Start free, scale as you grow</p>
+        
+        <div class="pricing-cards">
+            <div class="pricing-card glass">
+                <h3 class="plan-name">Starter</h3>
+                <div class="plan-price">$19</div>
+                <div class="plan-period">per month</div>
+                <ul class="plan-features">
+                    <li>5 private repositories</li>
+                    <li>AI-powered summaries</li>
+                    <li>Basic deployments</li>
+                    <li>Email support</li>
+                    <li>Slack integration</li>
+                </ul>
+                <a href="https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc" class="btn btn-secondary" style="width: 100%;">Start Free Trial</a>
+            </div>
+            
+            <div class="pricing-card glass popular">
+                <h3 class="plan-name">Professional</h3>
+                <div class="plan-price">$49</div>
+                <div class="plan-period">per month</div>
+                <ul class="plan-features">
+                    <li>20 private repositories</li>
+                    <li>All AI providers</li>
+                    <li>Multi-cloud deployments</li>
+                    <li>Priority support</li>
+                    <li>All integrations</li>
+                    <li>Advanced strategies</li>
+                </ul>
+                <a href="https://buy.stripe.com/bIYfZjeoQ7NS6XQeVc" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+            </div>
+            
+            <div class="pricing-card glass">
+                <h3 class="plan-name">Enterprise</h3>
+                <div class="plan-price">$199</div>
+                <div class="plan-period">per month</div>
+                <ul class="plan-features">
+                    <li>Unlimited repositories</li>
+                    <li>Custom AI models</li>
+                    <li>On-premise deployment</li>
+                    <li>24/7 phone support</li>
+                    <li>SSO/SAML</li>
+                    <li>SLA guarantee</li>
+                </ul>
+                <a href="mailto:sales@releasepilot.net" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+            </div>
+        </div>
+        
+        <p style="text-align: center; margin-top: 3rem; color: var(--text-dim);">
+            ✨ Free forever for open source projects • 14-day free trial • No credit card required
+        </p>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="logo" style="font-size: 1.5rem; margin-bottom: 1rem;">ReleasePilot</div>
+        <p>© 2025 ReleasePilot.net • Next-Generation DevOps Automation</p>
+        <div class="footer-links">
+            <a href="https://github.com/marketplace/actions/releasepilot">GitHub</a>
+            <a href="mailto:support@releasepilot.net">Support</a>
+            <a href="https://docs.releasepilot.net">Documentation</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </footer>
+    
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Add parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-animation::before');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+        
+        // Analytics
+        function trackEvent(type, data = {}) {
+            console.log('Event:', type, data);
+            // Add your analytics here
+        }
+        
+        // Track button clicks
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                trackEvent('click', {
+                    element: 'button',
+                    label: this.textContent,
+                    href: this.href
+                });
+            });
+        });
+    </script>
+</body>
+</html>

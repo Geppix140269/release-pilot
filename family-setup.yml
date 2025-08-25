@@ -1,0 +1,22 @@
+name: ReleasePilot Family Setup
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: ReleasePilot
+        uses: geppix140269/release-pilot@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          license_key: "RP-FAMILY-FREE"  # Special family license
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          
+          # Or if you want to skip license check entirely for family:
+          # skip_license: true
+          # allowed_users: "your-sons-github-username"
