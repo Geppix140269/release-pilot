@@ -1,0 +1,16 @@
+# Headers for proper OG image serving
+/og-image.png
+  Cache-Control: public, max-age=3600
+  Content-Type: image/png
+  X-Content-Type-Options: nosniff
+
+/og-image.png?v=*
+  Cache-Control: public, max-age=3600
+  Content-Type: image/png
+  X-Content-Type-Options: nosniff
+
+# Security headers for all pages
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

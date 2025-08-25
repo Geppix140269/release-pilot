@@ -19,6 +19,21 @@
 [functions."daily-report"]
   schedule = "0 9 * * *"  # Daily at 9 AM UTC
 
+# Headers for OG image
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"
+    Content-Type = "image/png"
+    X-Content-Type-Options = "nosniff"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+    X-Content-Type-Options = "nosniff"
+
 # Headers for security and performance
 [[headers]]
   for = "/*"
